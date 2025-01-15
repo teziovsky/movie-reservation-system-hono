@@ -4,7 +4,7 @@ import * as HttpStatusPhrases from "stoker/http-status-phrases";
 
 import type { AppRouteHandler } from "@/lib/types";
 
-import db from "@/db";
+import { db } from "@/db";
 import { tasks } from "@/db/schema";
 import { ZOD_ERROR_CODES, ZOD_ERROR_MESSAGES } from "@/lib/constants";
 
@@ -84,9 +84,10 @@ export const patch: AppRouteHandler<PatchRoute> = async (c) => {
 export const remove: AppRouteHandler<RemoveRoute> = async (c) => {
   const { id } = c.req.valid("param");
   const result = await db.delete(tasks)
-    .where(eq(tasks.id, id));
+    .where(eq(tasks.id, id))
+    .returning();
 
-  if (result.rowsAffected === 0) {
+  if (result.length === 0) {
     return c.json(
       {
         message: HttpStatusPhrases.NOT_FOUND,
