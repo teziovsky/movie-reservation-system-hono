@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  api:
+    image: movie-reservation-system-api:1.0
+    build:
+      context: .
+      dockerfile: Dockerfile
+      tags:
+        - "movie-reservation-system-api:1.0"
+    ports:
+      - "${PORT}:${PORT}"
+    volumes:
+      - .:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=${NODE_ENV}
+      - PORT=${PORT}
+      - LOG_LEVEL=${LOG_LEVEL}
+      - DATABASE_URL=${DATABASE_URL}
+    depends_on:
+      - db
+
+  db:
+    image: postgres:15-alpine
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=movie_reservation_system
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
