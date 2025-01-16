@@ -1,6 +1,4 @@
-import { apiReference } from "@scalar/hono-api-reference";
-import { bearerAuth } from "hono/bearer-auth";
-import { spec } from "node:test/reporters";
+import { swaggerUI } from "@hono/swagger-ui";
 
 import type { AppOpenAPI } from "./types";
 
@@ -13,7 +11,7 @@ export default function configureOpenAPI(app: AppOpenAPI) {
   });
 
   app.doc("/openapi", {
-    openapi: "3.0.0",
+    openapi: "3.1.0",
     info: {
       version: packageJSON.version,
       title: "Movie Reservation System API",
@@ -22,18 +20,8 @@ export default function configureOpenAPI(app: AppOpenAPI) {
 
   app.get(
     "/docs",
-    apiReference({
-      theme: "kepler",
-      layout: "modern",
-      defaultOpenAllTags: true,
-      showSidebar: true,
-      defaultHttpClient: {
-        targetKey: "javascript",
-        clientKey: "fetch",
-      },
-      spec: {
-        url: "/openapi",
-      },
+    swaggerUI({
+      url: "/openapi",
     }),
   );
 }

@@ -5,6 +5,7 @@
   "license": "MIT",
   "scripts": {
     "drizzle-kit": "drizzle-kit",
+    "seed": "cross-env DATABASE_HOST=localhost tsx src/db/seed.ts",
     "dev": "tsx watch src/index.ts",
     "start": "node ./dist/src/index.js",
     "typecheck": "tsc --noEmit",
@@ -14,9 +15,10 @@
     "build": "tsc && tsc-alias"
   },
   "dependencies": {
+    "@faker-js/faker": "^9.4.0",
     "@hono/node-server": "^1.13.7",
+    "@hono/swagger-ui": "^0.5.0",
     "@hono/zod-openapi": "^0.18.3",
-    "@scalar/hono-api-reference": "^0.5.165",
     "dotenv": "^16.4.7",
     "dotenv-expand": "^12.0.1",
     "drizzle-orm": "^0.38.3",

@@ -5,6 +5,7 @@ import { boolean, integer, pgEnum, pgTable, serial, text, timestamp } from "driz
 import { createInsertSchema, createSelectSchema, createUpdateSchema } from "drizzle-zod";
 
 export const userRole = pgEnum("user_role", ["root", "admin", "user"]);
+export type UserRole = typeof userRole.enumValues[number];
 
 export const users = pgTable("users", {
   id: serial("id").primaryKey(),
@@ -32,13 +33,13 @@ export const genres = pgTable("genres", {
 
 export const movieGenres = pgTable("movie_genres", {
   id: serial("id").primaryKey(),
-  movieId: integer("movie_id").notNull().references(() => movies.id),
-  genreId: integer("genre_id").notNull().references(() => genres.id),
+  movieId: integer("movie_id").notNull().references(() => movies.id, { onDelete: "cascade" }),
+  genreId: integer("genre_id").notNull().references(() => genres.id, { onDelete: "cascade" }),
 });
 
 export const showtimes = pgTable("showtimes", {
   id: serial("id").primaryKey(),
-  movieId: integer("movie_id").notNull().references(() => movies.id),
+  movieId: integer("movie_id").notNull().references(() => movies.id, { onDelete: "cascade" }),
   startTime: timestamp("start_time").notNull(),
   endTime: timestamp("end_time").notNull(),
   createdAt: timestamp("created_at").defaultNow(),
@@ -47,7 +48,7 @@ export const showtimes = pgTable("showtimes", {
 
 export const seats = pgTable("seats", {
   id: serial("id").primaryKey(),
-  showtimeId: integer("showtime_id").notNull().references(() => showtimes.id),
+  showtimeId: integer("showtime_id").notNull().references(() => showtimes.id, { onDelete: "cascade" }),
   row: text("row").notNull(),
   number: integer("number").notNull(),
   isAvailable: boolean("is_available").notNull().default(true),
@@ -55,9 +56,9 @@ export const seats = pgTable("seats", {
 
 export const reservations = pgTable("reservations", {
   id: serial("id").primaryKey(),
-  userId: integer("user_id").notNull().references(() => users.id),
-  showtimeId: integer("showtime_id").notNull().references(() => showtimes.id),
-  seatId: integer("seat_id").notNull().references(() => seats.id).unique(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  showtimeId: integer("showtime_id").notNull().references(() => showtimes.id, { onDelete: "cascade" }),
+  seatId: integer("seat_id").notNull().references(() => seats.id, { onDelete: "cascade" }).unique(),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });
@@ -142,7 +143,6 @@ export const insertUsersSchema = createInsertSchema(users, {
   passwordHash: true,
 }).omit({
   id: true,
-  role: true,
   createdAt: true,
   updatedAt: true,
 });
