@@ -1,27 +1,32 @@
-import { boolean, pgTable, serial, text, timestamp } from "drizzle-orm/pg-core";
+import type { z } from "zod";
+
+import { boolean, pgEnum, pgTable, serial, text, timestamp } from "drizzle-orm/pg-core";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 
-export const tasks = pgTable("tasks", {
+export const userRole = pgEnum("user_role", ["root", "admin", "user"]);
+
+export const users = pgTable("users", {
   id: serial("id").primaryKey(),
-  name: text("name").notNull(),
-  done: boolean("done").notNull().default(false),
+  email: text("email").notNull().unique(),
+  password: text("password").notNull(),
+  role: userRole("role").notNull().default("user"),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
-export const selectTasksSchema = createSelectSchema(tasks);
+export const selectUsersSchema = createSelectSchema(users);
 
-export const insertTasksSchema = createInsertSchema(
-  tasks,
-  {
-    name: schema => schema.min(1).max(500),
-  },
-).required({
-  done: true,
+export const insertUsersSchema = createInsertSchema(users, {
+  email: schema => schema.email(),
+  password: schema => schema.min(8),
+}).required({
+  email: true,
+  password: true,
 }).omit({
   id: true,
+  role: true,
   createdAt: true,
   updatedAt: true,
 });
 
-export const patchTasksSchema = insertTasksSchema.partial();
+export type InsertUsersPayload = z.infer<typeof insertUsersSchema>;

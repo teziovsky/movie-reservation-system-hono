@@ -4,6 +4,7 @@
   "version": "1.0.0",
   "license": "MIT",
   "scripts": {
+    "drizzle-kit": "drizzle-kit",
     "dev": "tsx watch src/index.ts",
     "start": "node ./dist/src/index.js",
     "typecheck": "tsc --noEmit",
@@ -19,6 +20,7 @@
     "dotenv": "^16.4.7",
     "dotenv-expand": "^12.0.1",
     "drizzle-orm": "^0.38.3",
+    "drizzle-seed": "^0.3.0",
     "drizzle-zod": "^0.6.1",
     "hono": "^4.6.16",
     "hono-pino": "^0.7.0",
