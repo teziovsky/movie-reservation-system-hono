@@ -5,31 +5,31 @@ import * as HttpStatusPhrases from "stoker/http-status-phrases";
 import type { AppRouteHandler } from "@/lib/types";
 
 import { db } from "@/db";
-import { tasks } from "@/db/schema";
+import { movies } from "@/db/schema";
 import { ZOD_ERROR_CODES, ZOD_ERROR_MESSAGES } from "@/lib/constants";
 
-import type { CreateRoute, GetOneRoute, ListRoute, PatchRoute, RemoveRoute } from "./tasks.routes";
+import type { CreateRoute, GetOneRoute, ListRoute, PatchRoute, RemoveRoute } from "./movies.routes";
 
 export const list: AppRouteHandler<ListRoute> = async (c) => {
-  const tasks = await db.query.tasks.findMany();
-  return c.json(tasks);
+  const movies = await db.query.movies.findMany();
+  return c.json(movies);
 };
 
 export const create: AppRouteHandler<CreateRoute> = async (c) => {
-  const task = c.req.valid("json");
-  const [inserted] = await db.insert(tasks).values(task).returning();
+  const movie = c.req.valid("json");
+  const [inserted] = await db.insert(movies).values(movie).returning();
   return c.json(inserted, HttpStatusCodes.OK);
 };
 
 export const getOne: AppRouteHandler<GetOneRoute> = async (c) => {
   const { id } = c.req.valid("param");
-  const task = await db.query.tasks.findFirst({
+  const movie = await db.query.movies.findFirst({
     where(fields, operators) {
       return operators.eq(fields.id, id);
     },
   });
 
-  if (!task) {
+  if (!movie) {
     return c.json(
       {
         message: HttpStatusPhrases.NOT_FOUND,
@@ -38,7 +38,7 @@ export const getOne: AppRouteHandler<GetOneRoute> = async (c) => {
     );
   }
 
-  return c.json(task, HttpStatusCodes.OK);
+  return c.json(movie, HttpStatusCodes.OK);
 };
 
 export const patch: AppRouteHandler<PatchRoute> = async (c) => {
@@ -64,12 +64,12 @@ export const patch: AppRouteHandler<PatchRoute> = async (c) => {
     );
   }
 
-  const [task] = await db.update(tasks)
+  const [movie] = await db.update(movies)
     .set(updates)
-    .where(eq(tasks.id, id))
+    .where(eq(movies.id, id))
     .returning();
 
-  if (!task) {
+  if (!movie) {
     return c.json(
       {
         message: HttpStatusPhrases.NOT_FOUND,
@@ -78,13 +78,13 @@ export const patch: AppRouteHandler<PatchRoute> = async (c) => {
     );
   }
 
-  return c.json(task, HttpStatusCodes.OK);
+  return c.json(movie, HttpStatusCodes.OK);
 };
 
 export const remove: AppRouteHandler<RemoveRoute> = async (c) => {
   const { id } = c.req.valid("param");
-  const result = await db.delete(tasks)
-    .where(eq(tasks.id, id))
+  const result = await db.delete(movies)
+    .where(eq(movies.id, id))
     .returning();
 
   if (result.length === 0) {

@@ -3,47 +3,47 @@ import * as HttpStatusCodes from "stoker/http-status-codes";
 import { jsonContent, jsonContentRequired } from "stoker/openapi/helpers";
 import { createErrorSchema, IdParamsSchema } from "stoker/openapi/schemas";
 
-import { insertTasksSchema, patchTasksSchema, selectTasksSchema } from "@/db/schema";
+import { insertMoviesSchema, patchMoviesSchema, selectMoviesSchema } from "@/db/schema";
 import { notFoundSchema } from "@/lib/constants";
 
-const tags = ["Tasks"];
+const tags = ["Movies"];
 
 export const list = createRoute({
-  path: "/tasks",
+  path: "/movies",
   method: "get",
   tags,
   responses: {
     [HttpStatusCodes.OK]: jsonContent(
-      z.array(selectTasksSchema),
-      "The list of tasks",
+      z.array(selectMoviesSchema),
+      "The list of movies",
     ),
   },
 });
 
 export const create = createRoute({
-  path: "/tasks",
+  path: "/movies",
   method: "post",
   request: {
     body: jsonContentRequired(
-      insertTasksSchema,
-      "The task to create",
+      insertMoviesSchema,
+      "The movie to create",
     ),
   },
   tags,
   responses: {
     [HttpStatusCodes.OK]: jsonContent(
-      selectTasksSchema,
-      "The created task",
+      selectMoviesSchema,
+      "The created movie",
     ),
     [HttpStatusCodes.UNPROCESSABLE_ENTITY]: jsonContent(
-      createErrorSchema(insertTasksSchema),
+      createErrorSchema(insertMoviesSchema),
       "The validation error(s)",
     ),
   },
 });
 
 export const getOne = createRoute({
-  path: "/tasks/{id}",
+  path: "/movies/{id}",
   method: "get",
   request: {
     params: IdParamsSchema,
@@ -51,12 +51,12 @@ export const getOne = createRoute({
   tags,
   responses: {
     [HttpStatusCodes.OK]: jsonContent(
-      selectTasksSchema,
-      "The requested task",
+      selectMoviesSchema,
+      "The requested movie",
     ),
     [HttpStatusCodes.NOT_FOUND]: jsonContent(
       notFoundSchema,
-      "Task not found",
+      "Movie not found",
     ),
     [HttpStatusCodes.UNPROCESSABLE_ENTITY]: jsonContent(
       createErrorSchema(IdParamsSchema),
@@ -66,27 +66,27 @@ export const getOne = createRoute({
 });
 
 export const patch = createRoute({
-  path: "/tasks/{id}",
+  path: "/movies/{id}",
   method: "patch",
   request: {
     params: IdParamsSchema,
     body: jsonContentRequired(
-      patchTasksSchema,
-      "The task updates",
+      patchMoviesSchema,
+      "The movie updates",
     ),
   },
   tags,
   responses: {
     [HttpStatusCodes.OK]: jsonContent(
-      selectTasksSchema,
-      "The updated task",
+      selectMoviesSchema,
+      "The updated movie",
     ),
     [HttpStatusCodes.NOT_FOUND]: jsonContent(
       notFoundSchema,
-      "Task not found",
+      "Movie not found",
     ),
     [HttpStatusCodes.UNPROCESSABLE_ENTITY]: jsonContent(
-      createErrorSchema(patchTasksSchema)
+      createErrorSchema(patchMoviesSchema)
         .or(createErrorSchema(IdParamsSchema)),
       "The validation error(s)",
     ),
@@ -94,7 +94,7 @@ export const patch = createRoute({
 });
 
 export const remove = createRoute({
-  path: "/tasks/{id}",
+  path: "/movies/{id}",
   method: "delete",
   request: {
     params: IdParamsSchema,
@@ -102,11 +102,11 @@ export const remove = createRoute({
   tags,
   responses: {
     [HttpStatusCodes.NO_CONTENT]: {
-      description: "Task deleted",
+      description: "Movie deleted",
     },
     [HttpStatusCodes.NOT_FOUND]: jsonContent(
       notFoundSchema,
-      "Task not found",
+      "Movie not found",
     ),
     [HttpStatusCodes.UNPROCESSABLE_ENTITY]: jsonContent(
       createErrorSchema(IdParamsSchema),

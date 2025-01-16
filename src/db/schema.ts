@@ -2,7 +2,7 @@ import type { z } from "zod";
 
 import { relations } from "drizzle-orm";
 import { boolean, integer, pgEnum, pgTable, serial, text, timestamp } from "drizzle-orm/pg-core";
-import { createInsertSchema, createSelectSchema } from "drizzle-zod";
+import { createInsertSchema, createSelectSchema, createUpdateSchema } from "drizzle-zod";
 
 export const userRole = pgEnum("user_role", ["root", "admin", "user"]);
 
@@ -199,7 +199,6 @@ export const insertReservationsSchema = createInsertSchema(reservations).require
   updatedAt: true,
 });
 
-// Types
 export type InsertUsersPayload = z.infer<typeof insertUsersSchema>;
 export type InsertMoviesPayload = z.infer<typeof insertMoviesSchema>;
 export type InsertGenresPayload = z.infer<typeof insertGenresSchema>;
@@ -207,3 +206,55 @@ export type InsertMovieGenresPayload = z.infer<typeof insertMovieGenresSchema>;
 export type InsertShowtimesPayload = z.infer<typeof insertShowtimesSchema>;
 export type InsertSeatsPayload = z.infer<typeof insertSeatsSchema>;
 export type InsertReservationsPayload = z.infer<typeof insertReservationsSchema>;
+
+// Patch schemas
+export const patchUsersSchema = createUpdateSchema(users, {
+  username: schema => schema.min(3),
+  email: schema => schema.email(),
+  passwordHash: schema => schema.min(8),
+}).omit({
+  id: true,
+  passwordHash: true,
+  role: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const patchMoviesSchema = createUpdateSchema(movies).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const patchGenresSchema = createUpdateSchema(genres).omit({
+  id: true,
+});
+
+export const patchMovieGenresSchema = createUpdateSchema(movieGenres).omit({
+  id: true,
+});
+
+export const patchShowtimesSchema = createUpdateSchema(showtimes).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const patchSeatsSchema = createUpdateSchema(seats).omit({
+  id: true,
+  isAvailable: true,
+});
+
+export const patchReservationsSchema = createUpdateSchema(reservations).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export type PatchUsersPayload = z.infer<typeof patchUsersSchema>;
+export type PatchMoviesPayload = z.infer<typeof patchMoviesSchema>;
+export type PatchGenresPayload = z.infer<typeof patchGenresSchema>;
+export type PatchMovieGenresPayload = z.infer<typeof patchMovieGenresSchema>;
+export type PatchShowtimesPayload = z.infer<typeof patchShowtimesSchema>;
+export type PatchSeatsPayload = z.infer<typeof patchSeatsSchema>;
+export type PatchReservationsPayload = z.infer<typeof patchReservationsSchema>;

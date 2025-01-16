@@ -4,7 +4,7 @@ import { db } from "@/db";
 import { users } from "@/db/schema";
 
 async function main() {
-  await seed(db, { users }, { count: 4 });
+  await seed(db, { users }, { count: 5 });
 }
 
 main();

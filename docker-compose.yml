@@ -1,4 +1,4 @@
-version: '3.8'
+version: "3.8"
 
 services:
   api:
@@ -10,14 +10,39 @@ services:
         - "movie-reservation-system-api:1.0"
     ports:
       - "${PORT}:${PORT}"
-    volumes:
-      - .:/app
-      - /app/node_modules
     environment:
+      - PNPM_HOME=/app/.pnpm-store
       - NODE_ENV=${NODE_ENV}
       - PORT=${PORT}
       - LOG_LEVEL=${LOG_LEVEL}
       - DATABASE_URL=${DATABASE_URL}
+
+    develop:
+      watch:
+        - action: rebuild
+          path: package.json
+          target: /app
+
+        - action: rebuild
+          path: pnpm-lock.yaml
+          target: /app
+
+        - action: sync
+          path: ./src
+          target: /app/src
+
+        - action: sync
+          path: ./tsconfig.json
+          target: /app/tsconfig.json
+
+        - action: sync
+          path: ./drizzle.config.ts
+          target: /app/drizzle.config.ts
+
+        - action: sync
+          path: ./vitest.config.ts
+          target: /app/vitest.config.ts
+
     depends_on:
       - db
 
@@ -26,9 +51,9 @@ services:
     ports:
       - "5432:5432"
     environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=${DB_PASSWORD}
-      - POSTGRES_DB=movie_reservation_system
+      - POSTGRES_USER=${DATABASE_USER}
+      - POSTGRES_PASSWORD=${DATABASE_PASSWORD}
+      - POSTGRES_DB=${DATABASE_NAME}
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
