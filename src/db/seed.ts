@@ -1,6 +1,7 @@
-import { hash } from "@/lib/auth";
 import { faker } from "@faker-js/faker";
 import { eq } from "drizzle-orm";
+
+import { hash } from "@/lib/auth";
 
 import type { InsertReservationsPayload, InsertSeatsPayload, InsertShowtimesPayload, InsertUsersPayload } from "./schema";
 
