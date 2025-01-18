@@ -44,7 +44,7 @@ export const create = createRoute({
   },
 });
 
-const MovieParamsSchema = z.object({
+export const MovieParamsSchema = z.object({
   movieId: selectMoviesSchema.shape.id,
 });
 

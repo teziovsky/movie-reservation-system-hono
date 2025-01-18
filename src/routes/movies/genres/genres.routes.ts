@@ -6,12 +6,16 @@ import { createErrorSchema } from "stoker/openapi/schemas";
 import { insertGenresSchema, patchGenresSchema, selectGenresSchema } from "@/db/schema";
 import { notFoundSchema } from "@/lib/constants";
 import { isAdminMiddleware } from "@/middlewares/is-admin.middleware";
+import { MovieParamsSchema } from "@/routes/movies/movies.routes";
 
-const tags = ["Genres"];
+const tags = ["Movies"];
 
 export const list = createRoute({
-  path: "/genres",
+  path: "/movies/{movieId}/genres",
   method: "get",
+  request: {
+    params: MovieParamsSchema,
+  },
   tags,
   responses: {
     [HttpStatusCodes.OK]: jsonContent(
@@ -22,9 +26,10 @@ export const list = createRoute({
 });
 
 export const create = createRoute({
-  path: "/genres",
+  path: "/movies/{movieId}/genres",
   method: "post",
   request: {
+    params: MovieParamsSchema,
     body: jsonContentRequired(
       insertGenresSchema,
       "The genre to create",
@@ -44,12 +49,12 @@ export const create = createRoute({
   },
 });
 
-const GenresParamsSchema = z.object({
+const GenresParamsSchema = MovieParamsSchema.merge(z.object({
   genreId: selectGenresSchema.shape.id,
-});
+}));
 
 export const getOne = createRoute({
-  path: "/genres/{genreId}",
+  path: "/movies/{movieId}/genres/{genreId}",
   method: "get",
   request: {
     params: GenresParamsSchema,
@@ -72,7 +77,7 @@ export const getOne = createRoute({
 });
 
 export const patch = createRoute({
-  path: "/genres/{genreId}",
+  path: "/movies/{movieId}/genres/{genreId}",
   method: "patch",
   request: {
     params: GenresParamsSchema,
@@ -101,7 +106,7 @@ export const patch = createRoute({
 });
 
 export const remove = createRoute({
-  path: "/genres/{genreId}",
+  path: "/movies/{movieId}/genres/{genreId}",
   method: "delete",
   request: {
     params: GenresParamsSchema,

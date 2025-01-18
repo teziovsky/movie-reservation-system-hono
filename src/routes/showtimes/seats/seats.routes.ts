@@ -7,7 +7,7 @@ import { insertSeatsSchema, patchSeatsSchema, selectSeatsSchema, selectShowtimes
 import { notFoundSchema } from "@/lib/constants";
 import { isAdminMiddleware } from "@/middlewares/is-admin.middleware";
 
-const tags = ["Seats"];
+const tags = ["Showtimes"];
 
 const ShowtimeParamsSchema = z.object({
   showtimeId: selectShowtimesSchema.shape.id,
