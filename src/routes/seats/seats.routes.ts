@@ -1,16 +1,16 @@
 import { createRoute, z } from "@hono/zod-openapi";
 import * as HttpStatusCodes from "stoker/http-status-codes";
 import { jsonContent, jsonContentRequired } from "stoker/openapi/helpers";
-import { createErrorSchema, IdParamsSchema } from "stoker/openapi/schemas";
+import { createErrorSchema } from "stoker/openapi/schemas";
 
-import { insertSeatsSchema, patchSeatsSchema, selectSeatsSchema } from "@/db/schema";
+import { insertSeatsSchema, patchSeatsSchema, selectSeatsSchema, selectShowtimesSchema } from "@/db/schema";
 import { notFoundSchema } from "@/lib/constants";
 import { isAdminMiddleware } from "@/middlewares/is-admin.middleware";
 
 const tags = ["Seats"];
 
 const ShowtimeParamsSchema = z.object({
-  showtimeId: IdParamsSchema.shape.id,
+  showtimeId: selectShowtimesSchema.shape.id,
 });
 
 export const list = createRoute({
@@ -53,7 +53,7 @@ export const create = createRoute({
 });
 
 const ShowtimeSeatParamsSchema = ShowtimeParamsSchema.merge(z.object({
-  seatId: IdParamsSchema.shape.id,
+  seatId: selectSeatsSchema.shape.id,
 }));
 
 export const getOne = createRoute({

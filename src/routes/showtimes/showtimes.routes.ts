@@ -1,7 +1,7 @@
 import { createRoute, z } from "@hono/zod-openapi";
 import * as HttpStatusCodes from "stoker/http-status-codes";
 import { jsonContent, jsonContentRequired } from "stoker/openapi/helpers";
-import { createErrorSchema, IdParamsSchema } from "stoker/openapi/schemas";
+import { createErrorSchema } from "stoker/openapi/schemas";
 
 import { insertShowtimesSchema, patchShowtimesSchema, selectShowtimesSchema } from "@/db/schema";
 import { notFoundSchema } from "@/lib/constants";
@@ -45,7 +45,7 @@ export const create = createRoute({
 });
 
 const ShowtimeParamsSchema = z.object({
-  showtimeId: IdParamsSchema.shape.id,
+  showtimeId: selectShowtimesSchema.shape.id,
 });
 
 export const getOne = createRoute({

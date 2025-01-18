@@ -1,7 +1,7 @@
 import { createRoute, z } from "@hono/zod-openapi";
 import * as HttpStatusCodes from "stoker/http-status-codes";
 import { jsonContent, jsonContentRequired } from "stoker/openapi/helpers";
-import { createErrorSchema, IdParamsSchema } from "stoker/openapi/schemas";
+import { createErrorSchema } from "stoker/openapi/schemas";
 
 import { patchUsersRoleSchema, patchUsersSchema, selectUsersSchema } from "@/db/schema";
 import { notFoundSchema, unauthorizedSchema, ZOD_ERROR_MESSAGES } from "@/lib/constants";
@@ -38,7 +38,7 @@ export const getCurrent = createRoute({
 });
 
 const UserParamsSchema = z.object({
-  userId: IdParamsSchema.shape.id,
+  userId: selectUsersSchema.shape.id,
 });
 
 export const getOne = createRoute({
