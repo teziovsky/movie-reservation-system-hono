@@ -1,7 +1,7 @@
 {
   "name": "movie-reservation-system-hono",
   "type": "module",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "license": "MIT",
   "scripts": {
     "drizzle-kit": "cross-env DATABASE_HOST=localhost drizzle-kit",
