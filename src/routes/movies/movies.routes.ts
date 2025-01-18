@@ -3,7 +3,7 @@ import * as HttpStatusCodes from "stoker/http-status-codes";
 import { jsonContent, jsonContentRequired } from "stoker/openapi/helpers";
 import { createErrorSchema, IdParamsSchema } from "stoker/openapi/schemas";
 
-import { insertMoviesSchema, patchMoviesSchema, selectMoviesSchema } from "@/db/schema";
+import { insertMoviesSchema, patchMoviesSchema, selectMoviesSchema, selectMoviesWithGenresSchema } from "@/db/schema";
 import { notFoundSchema } from "@/lib/constants";
 import { isAdminMiddleware } from "@/middlewares/is-admin.middleware";
 
@@ -15,7 +15,7 @@ export const list = createRoute({
   tags,
   responses: {
     [HttpStatusCodes.OK]: jsonContent(
-      z.array(selectMoviesSchema),
+      z.array(selectMoviesWithGenresSchema),
       "The list of movies",
     ),
   },
@@ -53,7 +53,7 @@ export const getOne = createRoute({
   tags,
   responses: {
     [HttpStatusCodes.OK]: jsonContent(
-      selectMoviesSchema,
+      selectMoviesWithGenresSchema,
       "The requested movie",
     ),
     [HttpStatusCodes.NOT_FOUND]: jsonContent(

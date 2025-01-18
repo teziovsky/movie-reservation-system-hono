@@ -26,6 +26,7 @@ export const movies = pgTable("movies", {
   id: serial("id").primaryKey(),
   title: text("title").notNull(),
   description: text("description").notNull(),
+  runtime: integer("runtime").notNull().default(0),
   posterUrl: text("poster_url").notNull(),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
@@ -139,8 +140,13 @@ export const selectShowtimesSchema = createSelectSchema(showtimes);
 export const selectSeatsSchema = createSelectSchema(seats);
 export const selectReservationsSchema = createSelectSchema(reservations);
 
+export const selectMoviesWithGenresSchema = createSelectSchema(movies).extend({
+  genres: z.array(selectGenresSchema),
+});
+
 export type User = z.infer<typeof selectUsersSchema>;
 export type Movie = z.infer<typeof selectMoviesSchema>;
+export type MovieWithGenres = z.infer<typeof selectMoviesWithGenresSchema>;
 export type Genre = z.infer<typeof selectGenresSchema>;
 export type MovieGenre = z.infer<typeof selectMovieGenresSchema>;
 export type Showtime = z.infer<typeof selectShowtimesSchema>;
@@ -172,7 +178,7 @@ export const insertMoviesSchema = createInsertSchema(movies).required({
   createdAt: true,
   updatedAt: true,
 }).extend({
-  genres: z.array(selectGenresSchema.shape.id).min(1),
+  genre_ids: z.array(selectGenresSchema.shape.id).min(1),
 });
 
 export const insertGenresSchema = createInsertSchema(genres).required({
@@ -253,7 +259,7 @@ export const patchMoviesSchema = createUpdateSchema(movies).omit({
   createdAt: true,
   updatedAt: true,
 }).extend({
-  genres: z.array(selectGenresSchema.shape.id).min(1),
+  genre_ids: z.array(selectGenresSchema.shape.id).min(1),
 });
 
 export const patchGenresSchema = createUpdateSchema(genres).omit({

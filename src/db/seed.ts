@@ -73,6 +73,7 @@ async function seedMovies(count: number) {
   const movieData = Array.from({ length: count }, () => ({
     title: faker.word.words({ count: { min: 2, max: 5 } }),
     description: faker.lorem.paragraph(),
+    runtime: faker.number.int({ min: 60, max: 180 }),
     posterUrl: faker.image.url({ width: 800, height: 600 }),
   }));
   return db.insert(movies).values(movieData).returning();
@@ -101,7 +102,7 @@ async function seedShowtimes(moviesList: typeof movies.$inferSelect[]) {
     const showCount = faker.number.int({ min: 3, max: 8 });
     for (let i = 0; i < showCount; i++) {
       const startTime = faker.date.between({ from: startDate, to: endDate });
-      const endTime = new Date(startTime.getTime() + 2 * 60 * 60 * 1000); // 2 hours later
+      const endTime = new Date(startTime.getTime() + movie.runtime * 60 * 1000);
       showtimeData.push({
         movieId: movie.id,
         startTime,

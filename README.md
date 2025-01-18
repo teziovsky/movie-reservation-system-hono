@@ -81,13 +81,13 @@ A modern movie reservation system built with Hono and Drizzle ORM. This system a
 
 - [x] Create CRUD endpoints for movies
 - [x] Implement genre management
-- [ ] Add showtime management
+- [x] Add showtime management
 - [ ] Create file upload for movie posters
 - [ ] Add movie search and filtering
 
 ### Seat & Reservation System
 
-- [ ] Design seat layout management
+- [ ] Implement seat management
 - [ ] Implement seat availability checking
 - [ ] Create seat reservation logic
 - [ ] Add reservation confirmation system

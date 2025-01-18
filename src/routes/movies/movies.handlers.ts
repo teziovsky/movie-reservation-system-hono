@@ -34,13 +34,13 @@ export const list: AppRouteHandler<ListRoute> = async (c) => {
 
 export const create: AppRouteHandler<CreateRoute> = async (c) => {
   const movie = c.req.valid("json");
-  const { genres, ...movieData } = movie;
+  const { genre_ids, ...movieData } = movie;
 
   const insertedMovie = await db.transaction(async (tx) => {
     const [inserted] = await db.insert(movies).values(movieData).returning();
 
     await tx.insert(movieGenres).values(
-      genres.map(genreId => ({
+      genre_ids.map(genreId => ({
         genreId,
         movieId: inserted.id,
       })),
@@ -90,7 +90,7 @@ export const getOne: AppRouteHandler<GetOneRoute> = async (c) => {
 export const patch: AppRouteHandler<PatchRoute> = async (c) => {
   const { id } = c.req.valid("param");
   const updates = c.req.valid("json");
-  const { genres, ...movieData } = updates;
+  const { genre_ids, ...movieData } = updates;
 
   if (Object.keys(movieData).length === 0) {
     return c.json(
@@ -122,7 +122,7 @@ export const patch: AppRouteHandler<PatchRoute> = async (c) => {
       where: (fields, operators) => operators.eq(fields.movieId, id),
     });
     const existingGenreSet = new Set(existingGenres.map(g => g.genreId));
-    const newGenreSet = new Set(genres);
+    const newGenreSet = new Set(genre_ids);
 
     const genresToDelete = [...existingGenreSet.difference(newGenreSet)];
     const genresToAdd = [...newGenreSet.difference(existingGenreSet)];

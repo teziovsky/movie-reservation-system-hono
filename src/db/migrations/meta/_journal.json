@@ -22,6 +22,20 @@
       "when": 1737206639831,
       "tag": "0002_freezing_bug",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1737226855277,
+      "tag": "0003_brave_wolfsbane",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1737226950470,
+      "tag": "0004_perfect_mandarin",
+      "breakpoints": true
     }
   ]
 }
