@@ -5,6 +5,7 @@ import auth from "@/routes/auth/auth.index";
 import genres from "@/routes/genres/genres.index";
 import index from "@/routes/index.route";
 import movies from "@/routes/movies/movies.index";
+import seats from "@/routes/seats/seats.index";
 import showtimes from "@/routes/showtimes/showtimes.index";
 import users from "@/routes/users/users.index";
 
@@ -26,6 +27,7 @@ const protectedRoutes = [
   movies,
   genres,
   showtimes,
+  seats,
 ] as const;
 
 protectedRoutes.forEach((route) => {
