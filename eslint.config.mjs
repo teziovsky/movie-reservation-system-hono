@@ -12,7 +12,9 @@ export default antfu({
   ignores: ["**/migrations/*"],
 }, {
   rules: {
-    "no-console": ["warn"],
+    "no-console": ["warn", {
+      allow: ["info", "warn", "error"],
+    }],
     "antfu/no-top-level-await": ["off"],
     "node/prefer-global/process": ["off"],
     "node/no-process-env": ["error"],

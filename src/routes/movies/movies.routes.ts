@@ -31,7 +31,7 @@ export const create = createRoute({
   },
   tags,
   responses: {
-    [HttpStatusCodes.OK]: jsonContent(
+    [HttpStatusCodes.CREATED]: jsonContent(
       selectMoviesSchema,
       "The created movie",
     ),

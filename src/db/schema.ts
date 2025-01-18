@@ -1,11 +1,16 @@
 import type { z } from "zod";
 
-import { relations } from "drizzle-orm";
+import { relations, sql } from "drizzle-orm";
 import { boolean, integer, pgEnum, pgTable, serial, text, timestamp } from "drizzle-orm/pg-core";
 import { createInsertSchema, createSelectSchema, createUpdateSchema } from "drizzle-zod";
 
 export const userRole = pgEnum("user_role", ["root", "admin", "user"]);
 export type UserRole = typeof userRole.enumValues[number];
+export const userRoles: Record<UserRole, number> = {
+  root: 1,
+  admin: 2,
+  user: 3,
+};
 
 export const users = pgTable("users", {
   id: serial("id").primaryKey(),
@@ -13,6 +18,7 @@ export const users = pgTable("users", {
   email: text("email").notNull().unique(),
   passwordHash: text("password_hash").notNull(),
   role: userRole("role").notNull().default("user"),
+  image: text("image").default(sql`NULL`),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });
@@ -124,7 +130,9 @@ export const reservationsRelations = relations(reservations, ({ one }) => ({
 }));
 
 // Select schemas
-export const selectUsersSchema = createSelectSchema(users);
+export const selectUsersSchema = createSelectSchema(users).omit({
+  passwordHash: true,
+});
 export const selectMoviesSchema = createSelectSchema(movies);
 export const selectGenresSchema = createSelectSchema(genres);
 export const selectMovieGenresSchema = createSelectSchema(movieGenres);
@@ -132,11 +140,20 @@ export const selectShowtimesSchema = createSelectSchema(showtimes);
 export const selectSeatsSchema = createSelectSchema(seats);
 export const selectReservationsSchema = createSelectSchema(reservations);
 
+export type User = z.infer<typeof selectUsersSchema>;
+export type Movie = z.infer<typeof selectMoviesSchema>;
+export type Genre = z.infer<typeof selectGenresSchema>;
+export type MovieGenre = z.infer<typeof selectMovieGenresSchema>;
+export type Showtime = z.infer<typeof selectShowtimesSchema>;
+export type Seat = z.infer<typeof selectSeatsSchema>;
+export type Reservation = z.infer<typeof selectReservationsSchema>;
+
 // Insert schemas
 export const insertUsersSchema = createInsertSchema(users, {
   username: schema => schema.min(3),
   email: schema => schema.email(),
   passwordHash: schema => schema.min(8),
+  image: schema => schema.url(),
 }).required({
   username: true,
   email: true,
@@ -211,11 +228,21 @@ export type InsertReservationsPayload = z.infer<typeof insertReservationsSchema>
 export const patchUsersSchema = createUpdateSchema(users, {
   username: schema => schema.min(3),
   email: schema => schema.email(),
-  passwordHash: schema => schema.min(8),
+  image: schema => schema.url(),
 }).omit({
   id: true,
   passwordHash: true,
   role: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const patchUsersRoleSchema = createUpdateSchema(users).omit({
+  id: true,
+  username: true,
+  email: true,
+  passwordHash: true,
+  image: true,
   createdAt: true,
   updatedAt: true,
 });
@@ -252,6 +279,7 @@ export const patchReservationsSchema = createUpdateSchema(reservations).omit({
 });
 
 export type PatchUsersPayload = z.infer<typeof patchUsersSchema>;
+export type PatchUsersRolePayload = z.infer<typeof patchUsersRoleSchema>;
 export type PatchMoviesPayload = z.infer<typeof patchMoviesSchema>;
 export type PatchGenresPayload = z.infer<typeof patchGenresSchema>;
 export type PatchMovieGenresPayload = z.infer<typeof patchMovieGenresSchema>;

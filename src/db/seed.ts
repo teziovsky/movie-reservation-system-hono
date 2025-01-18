@@ -1,12 +1,11 @@
 import { faker } from "@faker-js/faker";
 import { eq } from "drizzle-orm";
 
-import { hash } from "@/lib/auth";
+import type { InsertReservationsPayload, InsertSeatsPayload, InsertShowtimesPayload, InsertUsersPayload } from "@/db/schema";
 
-import type { InsertReservationsPayload, InsertSeatsPayload, InsertShowtimesPayload, InsertUsersPayload } from "./schema";
-
-import { db } from "./index";
-import { genres, movieGenres, movies, reservations, seats, showtimes, users } from "./schema";
+import { db } from "@/db";
+import { genres, movieGenres, movies, reservations, seats, showtimes, users } from "@/db/schema";
+import { hashPassword } from "@/lib/password";
 
 async function clearTables() {
   await db.delete(reservations);
@@ -21,11 +20,21 @@ async function clearTables() {
 async function seedUsers(count: number) {
   const userData: InsertUsersPayload[] = [];
 
+  const rootUser: InsertUsersPayload = {
+    username: "root",
+    email: "root@example.com",
+    passwordHash: await hashPassword("root1234"),
+    role: "root",
+    image: faker.image.avatar(),
+  };
+  userData.push(rootUser);
+
   const adminUser: InsertUsersPayload = {
     username: "admin",
     email: "admin@example.com",
-    passwordHash: await hash("admin123"),
+    passwordHash: await hashPassword("admin1234"),
     role: "admin",
+    image: faker.image.avatar(),
   };
   userData.push(adminUser);
 
@@ -33,8 +42,9 @@ async function seedUsers(count: number) {
     const user: InsertUsersPayload = {
       username: faker.person.fullName(),
       email: faker.internet.email(),
-      passwordHash: await hash("password123"),
+      passwordHash: await hashPassword("password1234"),
       role: "user",
+      image: faker.image.avatar(),
     };
     userData.push(user);
   }
@@ -148,33 +158,33 @@ async function seedReservations(
 }
 
 async function main() {
-  console.log("🧹 Clearing existing data...");
+  console.info("🧹 Clearing existing data...");
   await clearTables();
 
-  console.log("🌱 Starting seed...");
+  console.info("🌱 Starting seed...");
 
   const usersList = await seedUsers(5);
-  console.log(`✅ Created ${usersList.length} users`);
+  console.info(`✅ Created ${usersList.length} users`);
 
   const genresList = await seedGenres();
-  console.log(`✅ Created ${genresList.length} genres`);
+  console.info(`✅ Created ${genresList.length} genres`);
 
   const moviesList = await seedMovies(20);
-  console.log(`✅ Created ${moviesList.length} movies`);
+  console.info(`✅ Created ${moviesList.length} movies`);
 
   const movieGenresList = await seedMovieGenres(moviesList, genresList);
-  console.log(`✅ Created ${movieGenresList.length} movie-genre relations`);
+  console.info(`✅ Created ${movieGenresList.length} movie-genre relations`);
 
   const showtimesList = await seedShowtimes(moviesList);
-  console.log(`✅ Created ${showtimesList.length} showtimes`);
+  console.info(`✅ Created ${showtimesList.length} showtimes`);
 
   const seatsList = await seedSeats(showtimesList);
-  console.log(`✅ Created ${seatsList.length} seats`);
+  console.info(`✅ Created ${seatsList.length} seats`);
 
   const reservationsList = await seedReservations(usersList, seatsList, showtimesList);
-  console.log(`✅ Created ${reservationsList.length} reservations`);
+  console.info(`✅ Created ${reservationsList.length} reservations`);
 
-  console.log("✨ Seed completed successfully!");
+  console.info("✨ Seed completed successfully!");
 }
 
 main().catch(console.error);
