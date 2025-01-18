@@ -1,4 +1,3 @@
-import { comparePassword, hashPassword } from "@/lib/password";
 import { eq } from "drizzle-orm";
 import * as HttpStatusCodes from "stoker/http-status-codes";
 
@@ -8,6 +7,7 @@ import { db } from "@/db";
 import { users } from "@/db/schema";
 import { ZOD_ERROR_MESSAGES } from "@/lib/constants";
 import { generateToken } from "@/lib/jwt";
+import { comparePassword, hashPassword } from "@/lib/password";
 
 import type { LoginRoute, RegisterRoute } from "./auth.routes";
 

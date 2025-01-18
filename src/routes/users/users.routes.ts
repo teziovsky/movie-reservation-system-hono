@@ -5,6 +5,7 @@ import { createErrorSchema, IdParamsSchema } from "stoker/openapi/schemas";
 
 import { patchUsersRoleSchema, patchUsersSchema, selectUsersSchema } from "@/db/schema";
 import { notFoundSchema, unauthorizedSchema, ZOD_ERROR_MESSAGES } from "@/lib/constants";
+import { isAdminMiddleware } from "@/middlewares/is-admin.middleware";
 
 const tags = ["Users"];
 
@@ -20,6 +21,22 @@ export const list = createRoute({
   },
 });
 
+export const getCurrent = createRoute({
+  path: "/users/current",
+  method: "get",
+  tags,
+  responses: {
+    [HttpStatusCodes.OK]: jsonContent(
+      selectUsersSchema,
+      "The current user",
+    ),
+    [HttpStatusCodes.NOT_FOUND]: jsonContent(
+      notFoundSchema,
+      "User not found",
+    ),
+  },
+});
+
 export const getOne = createRoute({
   path: "/users/{id}",
   method: "get",
@@ -31,26 +48,6 @@ export const getOne = createRoute({
     [HttpStatusCodes.OK]: jsonContent(
       selectUsersSchema,
       "The requested user",
-    ),
-    [HttpStatusCodes.NOT_FOUND]: jsonContent(
-      notFoundSchema,
-      "User not found",
-    ),
-    [HttpStatusCodes.UNPROCESSABLE_ENTITY]: jsonContent(
-      createErrorSchema(IdParamsSchema),
-      "Invalid id error",
-    ),
-  },
-});
-
-export const getMe = createRoute({
-  path: "/users/current",
-  method: "get",
-  tags,
-  responses: {
-    [HttpStatusCodes.OK]: jsonContent(
-      selectUsersSchema,
-      "The current user",
     ),
     [HttpStatusCodes.NOT_FOUND]: jsonContent(
       notFoundSchema,
@@ -101,6 +98,7 @@ export const patchRole = createRoute({
       "The user role updates",
     ),
   },
+  middleware: [isAdminMiddleware] as const,
   tags,
   responses: {
     [HttpStatusCodes.OK]: jsonContent(
@@ -129,6 +127,7 @@ export const remove = createRoute({
   request: {
     params: IdParamsSchema,
   },
+  middleware: [isAdminMiddleware] as const,
   tags,
   responses: {
     [HttpStatusCodes.NO_CONTENT]: {
@@ -146,8 +145,8 @@ export const remove = createRoute({
 });
 
 export type ListRoute = typeof list;
+export type GetCurrentRoute = typeof getCurrent;
 export type GetOneRoute = typeof getOne;
-export type GetMeRoute = typeof getMe;
 export type PatchRoute = typeof patch;
 export type PatchRoleRoute = typeof patchRole;
 export type RemoveRoute = typeof remove;

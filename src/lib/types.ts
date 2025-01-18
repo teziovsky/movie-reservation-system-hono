@@ -7,6 +7,7 @@ export interface AppBindings {
   Variables: {
     logger: PinoLogger;
     userId: User["id"];
+    loggedInUserRole: User["role"];
   };
 };
 

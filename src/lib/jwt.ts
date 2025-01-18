@@ -1,10 +1,15 @@
-import { jwtVerify, SignJWT } from "jose";
+import { type JWTPayload as JWTPayloadRaw, jwtVerify, SignJWT } from "jose";
 
 import type { User } from "@/db/schema";
 
 import env from "@/env";
 
 const secret = new TextEncoder().encode(env.JWT_SECRET);
+
+interface JWTPayload {
+  userId: User["id"];
+  exp: JWTPayloadRaw["exp"];
+}
 
 export function generateToken(payload: { userId: User["id"] }) {
   return new SignJWT(payload)
@@ -14,5 +19,5 @@ export function generateToken(payload: { userId: User["id"] }) {
 }
 
 export function verifyToken(token: string) {
-  return jwtVerify(token, secret);
+  return jwtVerify<JWTPayload>(token, secret);
 }

@@ -5,8 +5,8 @@ import * as routes from "./users.routes";
 
 const router = createRouter()
   .openapi(routes.list, handlers.list)
+  .openapi(routes.getCurrent, handlers.getCurrent)
   .openapi(routes.getOne, handlers.getOne)
-  .openapi(routes.getMe, handlers.getMe)
   .openapi(routes.patch, handlers.patch)
   .openapi(routes.patchRole, handlers.patchRole)
   .openapi(routes.remove, handlers.remove);

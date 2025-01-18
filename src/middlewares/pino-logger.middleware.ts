@@ -13,6 +13,7 @@ export function pinoLogger() {
       : pretty({
           colorize: true,
           colorizeObjects: true,
+          levelFirst: true,
         })),
     http: {
       reqId: () => crypto.randomUUID(),

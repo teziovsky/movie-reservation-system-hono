@@ -5,6 +5,7 @@ import { createErrorSchema, IdParamsSchema } from "stoker/openapi/schemas";
 
 import { insertMoviesSchema, patchMoviesSchema, selectMoviesSchema } from "@/db/schema";
 import { notFoundSchema } from "@/lib/constants";
+import { isAdminMiddleware } from "@/middlewares/is-admin.middleware";
 
 const tags = ["Movies"];
 
@@ -29,6 +30,7 @@ export const create = createRoute({
       "The movie to create",
     ),
   },
+  middleware: [isAdminMiddleware] as const,
   tags,
   responses: {
     [HttpStatusCodes.CREATED]: jsonContent(
@@ -75,6 +77,7 @@ export const patch = createRoute({
       "The movie updates",
     ),
   },
+  middleware: [isAdminMiddleware] as const,
   tags,
   responses: {
     [HttpStatusCodes.OK]: jsonContent(
@@ -99,6 +102,7 @@ export const remove = createRoute({
   request: {
     params: IdParamsSchema,
   },
+  middleware: [isAdminMiddleware] as const,
   tags,
   responses: {
     [HttpStatusCodes.NO_CONTENT]: {

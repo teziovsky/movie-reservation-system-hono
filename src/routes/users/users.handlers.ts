@@ -8,7 +8,7 @@ import { db } from "@/db";
 import { userRoles, users } from "@/db/schema";
 import { ZOD_ERROR_CODES, ZOD_ERROR_MESSAGES } from "@/lib/constants";
 
-import type { GetMeRoute, GetOneRoute, ListRoute, PatchRoleRoute, PatchRoute, RemoveRoute } from "./users.routes";
+import type { GetCurrentRoute, GetOneRoute, ListRoute, PatchRoleRoute, PatchRoute, RemoveRoute } from "./users.routes";
 
 export const list: AppRouteHandler<ListRoute> = async (c) => {
   const users = await db.query.users.findMany({
@@ -44,9 +44,8 @@ export const getOne: AppRouteHandler<GetOneRoute> = async (c) => {
   return c.json(user, HttpStatusCodes.OK);
 };
 
-export const getMe: AppRouteHandler<GetMeRoute> = async (c) => {
+export const getCurrent: AppRouteHandler<GetCurrentRoute> = async (c) => {
   const userId = c.get("userId");
-  console.log("userId:", userId);
 
   const user = await db.query.users.findFirst({
     where(fields, operators) {

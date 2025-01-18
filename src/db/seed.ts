@@ -163,7 +163,7 @@ async function main() {
 
   console.info("🌱 Starting seed...");
 
-  const usersList = await seedUsers(5);
+  const usersList = await seedUsers(10);
   console.info(`✅ Created ${usersList.length} users`);
 
   const genresList = await seedGenres();

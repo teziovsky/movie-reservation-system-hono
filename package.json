@@ -13,6 +13,8 @@
     "lint": "eslint .",
     "fix": "npm run lint -- --fix",
     "test": "cross-env NODE_ENV=test vitest",
+    "test:watch": "cross-env NODE_ENV=test vitest --watch",
+    "test:coverage": "cross-env NODE_ENV=test vitest --coverage",
     "build": "tsc && tsc-alias"
   },
   "dependencies": {

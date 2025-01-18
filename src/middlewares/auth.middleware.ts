@@ -1,8 +1,8 @@
-import type { Context, Next } from "hono";
+import { createMiddleware } from "hono/factory";
 
 import { verifyToken } from "@/lib/jwt";
 
-export async function authMiddleware(c: Context, next: Next) {
+export const authMiddleware = createMiddleware(async (c, next) => {
   const token = c.req.header("Authorization")?.replace("Bearer ", "");
 
   if (!token) {
@@ -11,10 +11,11 @@ export async function authMiddleware(c: Context, next: Next) {
 
   try {
     const { payload } = await verifyToken(token);
-    c.set("userId", payload.userId);
+    c.set("userId", String(payload.userId));
+
     await next();
   }
   catch {
     return c.json({ message: "Invalid token" }, 401);
   }
-}
+});
