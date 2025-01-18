@@ -24,9 +24,7 @@ export const getOne: AppRouteHandler<GetOneRoute> = async (c) => {
   const { id } = c.req.valid("param");
 
   const user = await db.query.users.findFirst({
-    where(fields, operators) {
-      return operators.eq(fields.id, id);
-    },
+    where: (fields, operators) => operators.eq(fields.id, id),
     columns: {
       passwordHash: false,
     },
@@ -48,9 +46,7 @@ export const getCurrent: AppRouteHandler<GetCurrentRoute> = async (c) => {
   const userId = c.get("userId");
 
   const user = await db.query.users.findFirst({
-    where(fields, operators) {
-      return operators.eq(fields.id, userId);
-    },
+    where: (fields, operators) => operators.eq(fields.id, userId),
     columns: {
       passwordHash: false,
     },
@@ -114,9 +110,7 @@ export const patchRole: AppRouteHandler<PatchRoleRoute> = async (c) => {
   const userId = c.get("userId");
 
   const loggedInUser = await db.query.users.findFirst({
-    where(fields, operators) {
-      return operators.eq(fields.id, userId);
-    },
+    where: (fields, operators) => operators.eq(fields.id, userId),
     columns: {
       role: true,
     },
@@ -134,9 +128,7 @@ export const patchRole: AppRouteHandler<PatchRoleRoute> = async (c) => {
   const loggedInUserRole = userRoles[loggedInUser.role];
 
   const targetUser = await db.query.users.findFirst({
-    where(fields, operators) {
-      return operators.eq(fields.id, id);
-    },
+    where: (fields, operators) => operators.eq(fields.id, id),
     columns: {
       role: true,
     },
@@ -181,6 +173,7 @@ export const patchRole: AppRouteHandler<PatchRoleRoute> = async (c) => {
 
 export const remove: AppRouteHandler<RemoveRoute> = async (c) => {
   const { id } = c.req.valid("param");
+
   const result = await db.delete(users)
     .where(eq(users.id, id))
     .returning();

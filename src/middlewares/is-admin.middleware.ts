@@ -8,9 +8,7 @@ export const isAdminMiddleware = createMiddleware(async (c, next) => {
   const userId = c.get("userId");
 
   const loggedInUser = await db.query.users.findFirst({
-    where(fields, operators) {
-      return operators.eq(fields.id, userId);
-    },
+    where: (fields, operators) => operators.eq(fields.id, userId),
     columns: {
       role: true,
     },

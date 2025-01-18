@@ -61,9 +61,11 @@ A modern movie reservation system built with Hono and Drizzle ORM. This system a
 
 - [x] Design database schema for all entities
 - [x] Create user and role models
-- [ ] Create movie and genre models
-- [ ] Create showtime and seat models
-- [ ] Create reservation models
+- [x] Create movie model
+- [x] Create genre model
+- [x] Create showtime model
+- [x] Create seat model
+- [x] Create reservation model
 - [x] Implement database relationships
 - [x] Create seed data for initial admin
 
@@ -72,14 +74,13 @@ A modern movie reservation system built with Hono and Drizzle ORM. This system a
 - [x] Implement user registration
 - [x] Implement user login with JWT
 - [x] Set up role-based access control
-- [ ] Create admin promotion functionality
+- [x] Create admin promotion functionality
 - [x] Implement authentication middleware
-- [ ] Add user session management
 
 ### Movie Management
 
 - [x] Create CRUD endpoints for movies
-- [ ] Implement genre management
+- [x] Implement genre management
 - [ ] Add showtime management
 - [ ] Create file upload for movie posters
 - [ ] Add movie search and filtering
@@ -113,9 +114,7 @@ A modern movie reservation system built with Hono and Drizzle ORM. This system a
 
 - [x] Add API documentation
 - [ ] Create database schema documentation
-- [ ] Add setup instructions
-- [ ] Document business rules
-- [ ] Create user guides
+- [x] Add setup instructions
 
 ## 🚦 Getting Started
 

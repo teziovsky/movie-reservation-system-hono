@@ -1,32 +1,78 @@
-import { eq } from "drizzle-orm";
+import { and, eq, inArray } from "drizzle-orm";
 import * as HttpStatusCodes from "stoker/http-status-codes";
 import * as HttpStatusPhrases from "stoker/http-status-phrases";
 
 import type { AppRouteHandler } from "@/lib/types";
 
 import { db } from "@/db";
-import { movies } from "@/db/schema";
+import { movieGenres, movies } from "@/db/schema";
 import { ZOD_ERROR_CODES, ZOD_ERROR_MESSAGES } from "@/lib/constants";
 
 import type { CreateRoute, GetOneRoute, ListRoute, PatchRoute, RemoveRoute } from "./movies.routes";
 
 export const list: AppRouteHandler<ListRoute> = async (c) => {
-  const movies = await db.query.movies.findMany();
+  const movies = await db.query.movies.findMany({
+    with: {
+      movieGenres: {
+        with: {
+          genre: true,
+        },
+      },
+    },
+  }).then((movies) => {
+    return movies.map((movie) => {
+      const { movieGenres, ...movieData } = movie;
+      return {
+        ...movieData,
+        genres: movieGenres.map(mg => mg.genre),
+      };
+    });
+  });
+
   return c.json(movies);
 };
 
 export const create: AppRouteHandler<CreateRoute> = async (c) => {
   const movie = c.req.valid("json");
-  const [inserted] = await db.insert(movies).values(movie).returning();
-  return c.json(inserted, HttpStatusCodes.CREATED);
+  const { genres, ...movieData } = movie;
+
+  const insertedMovie = await db.transaction(async (tx) => {
+    const [inserted] = await db.insert(movies).values(movieData).returning();
+
+    await tx.insert(movieGenres).values(
+      genres.map(genreId => ({
+        genreId,
+        movieId: inserted.id,
+      })),
+    );
+
+    return inserted;
+  });
+  return c.json(insertedMovie, HttpStatusCodes.CREATED);
 };
 
 export const getOne: AppRouteHandler<GetOneRoute> = async (c) => {
   const { id } = c.req.valid("param");
+
   const movie = await db.query.movies.findFirst({
-    where(fields, operators) {
-      return operators.eq(fields.id, id);
+    where: (fields, operators) => operators.eq(fields.id, id),
+    with: {
+      movieGenres: {
+        with: {
+          genre: true,
+        },
+      },
     },
+  }).then((movie) => {
+    if (!movie) {
+      return null;
+    }
+
+    const { movieGenres, ...movieData } = movie;
+    return {
+      ...movieData,
+      genres: movieGenres.map(mg => mg.genre),
+    };
   });
 
   if (!movie) {
@@ -44,8 +90,9 @@ export const getOne: AppRouteHandler<GetOneRoute> = async (c) => {
 export const patch: AppRouteHandler<PatchRoute> = async (c) => {
   const { id } = c.req.valid("param");
   const updates = c.req.valid("json");
+  const { genres, ...movieData } = updates;
 
-  if (Object.keys(updates).length === 0) {
+  if (Object.keys(movieData).length === 0) {
     return c.json(
       {
         success: false,
@@ -64,12 +111,36 @@ export const patch: AppRouteHandler<PatchRoute> = async (c) => {
     );
   }
 
-  const [movie] = await db.update(movies)
-    .set(updates)
-    .where(eq(movies.id, id))
-    .returning();
+  const updated = await db.transaction(async (tx) => {
+    const [updatedMovie] = await db.update(movies).set(movieData).where(eq(movies.id, id)).returning();
 
-  if (!movie) {
+    if (!updatedMovie) {
+      return null;
+    }
+
+    const existingGenres = await tx.query.movieGenres.findMany({
+      where: (fields, operators) => operators.eq(fields.movieId, id),
+    });
+    const existingGenreSet = new Set(existingGenres.map(g => g.genreId));
+    const newGenreSet = new Set(genres);
+
+    const genresToDelete = [...existingGenreSet.difference(newGenreSet)];
+    const genresToAdd = [...newGenreSet.difference(existingGenreSet)];
+
+    if (genresToDelete.length > 0) {
+      await tx.delete(movieGenres)
+        .where(and(eq(movieGenres.movieId, id), inArray(movieGenres.genreId, genresToDelete)));
+    }
+
+    if (genresToAdd.length > 0) {
+      await tx.insert(movieGenres).values(genresToAdd.map(genreId => ({ genreId, movieId: id })),
+      );
+    }
+
+    return updatedMovie;
+  });
+
+  if (!updated) {
     return c.json(
       {
         message: HttpStatusPhrases.NOT_FOUND,
@@ -78,11 +149,12 @@ export const patch: AppRouteHandler<PatchRoute> = async (c) => {
     );
   }
 
-  return c.json(movie, HttpStatusCodes.OK);
+  return c.json(updated, HttpStatusCodes.OK);
 };
 
 export const remove: AppRouteHandler<RemoveRoute> = async (c) => {
   const { id } = c.req.valid("param");
+
   const result = await db.delete(movies)
     .where(eq(movies.id, id))
     .returning();

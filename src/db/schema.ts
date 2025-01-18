@@ -1,8 +1,7 @@
-import type { z } from "zod";
-
 import { relations, sql } from "drizzle-orm";
 import { boolean, integer, pgEnum, pgTable, serial, text, timestamp } from "drizzle-orm/pg-core";
 import { createInsertSchema, createSelectSchema, createUpdateSchema } from "drizzle-zod";
+import { z } from "zod";
 
 export const userRole = pgEnum("user_role", ["root", "admin", "user"]);
 export type UserRole = typeof userRole.enumValues[number];
@@ -172,6 +171,8 @@ export const insertMoviesSchema = createInsertSchema(movies).required({
   id: true,
   createdAt: true,
   updatedAt: true,
+}).extend({
+  genres: z.array(selectGenresSchema.shape.id).min(1),
 });
 
 export const insertGenresSchema = createInsertSchema(genres).required({
@@ -251,6 +252,8 @@ export const patchMoviesSchema = createUpdateSchema(movies).omit({
   id: true,
   createdAt: true,
   updatedAt: true,
+}).extend({
+  genres: z.array(selectGenresSchema.shape.id).min(1),
 });
 
 export const patchGenresSchema = createUpdateSchema(genres).omit({
