@@ -22,10 +22,10 @@ export const create: AppRouteHandler<CreateRoute> = async (c) => {
 };
 
 export const getOne: AppRouteHandler<GetOneRoute> = async (c) => {
-  const { id } = c.req.valid("param");
+  const { genreId } = c.req.valid("param");
 
   const genre = await db.query.genres.findFirst({
-    where: (fields, operators) => operators.eq(fields.id, id),
+    where: (fields, operators) => operators.eq(fields.id, genreId),
   });
 
   if (!genre) {
@@ -41,7 +41,7 @@ export const getOne: AppRouteHandler<GetOneRoute> = async (c) => {
 };
 
 export const patch: AppRouteHandler<PatchRoute> = async (c) => {
-  const { id } = c.req.valid("param");
+  const { genreId } = c.req.valid("param");
   const updates = c.req.valid("json");
 
   if (Object.keys(updates).length === 0) {
@@ -65,7 +65,7 @@ export const patch: AppRouteHandler<PatchRoute> = async (c) => {
 
   const [genre] = await db.update(genres)
     .set(updates)
-    .where(eq(genres.id, id))
+    .where(eq(genres.id, genreId))
     .returning();
 
   if (!genre) {
@@ -81,10 +81,10 @@ export const patch: AppRouteHandler<PatchRoute> = async (c) => {
 };
 
 export const remove: AppRouteHandler<RemoveRoute> = async (c) => {
-  const { id } = c.req.valid("param");
+  const { genreId } = c.req.valid("param");
 
   const result = await db.delete(genres)
-    .where(eq(genres.id, id))
+    .where(eq(genres.id, genreId))
     .returning();
 
   if (result.length === 0) {

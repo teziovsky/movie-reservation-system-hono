@@ -44,11 +44,15 @@ export const create = createRoute({
   },
 });
 
+const ShowtimeParamsSchema = z.object({
+  showtimeId: IdParamsSchema.shape.id,
+});
+
 export const getOne = createRoute({
-  path: "/showtimes/{id}",
+  path: "/showtimes/{showtimeId}",
   method: "get",
   request: {
-    params: IdParamsSchema,
+    params: ShowtimeParamsSchema,
   },
   tags,
   responses: {
@@ -61,17 +65,17 @@ export const getOne = createRoute({
       "Showtime not found",
     ),
     [HttpStatusCodes.UNPROCESSABLE_ENTITY]: jsonContent(
-      createErrorSchema(IdParamsSchema),
+      createErrorSchema(ShowtimeParamsSchema),
       "Invalid id error",
     ),
   },
 });
 
 export const patch = createRoute({
-  path: "/showtimes/{id}",
+  path: "/showtimes/{showtimeId}",
   method: "patch",
   request: {
-    params: IdParamsSchema,
+    params: ShowtimeParamsSchema,
     body: jsonContentRequired(
       patchShowtimesSchema,
       "The showtime updates",
@@ -90,17 +94,17 @@ export const patch = createRoute({
     ),
     [HttpStatusCodes.UNPROCESSABLE_ENTITY]: jsonContent(
       createErrorSchema(patchShowtimesSchema)
-        .or(createErrorSchema(IdParamsSchema)),
+        .or(createErrorSchema(ShowtimeParamsSchema)),
       "The validation error(s)",
     ),
   },
 });
 
 export const remove = createRoute({
-  path: "/showtimes/{id}",
+  path: "/showtimes/{showtimeId}",
   method: "delete",
   request: {
-    params: IdParamsSchema,
+    params: ShowtimeParamsSchema,
   },
   middleware: [isAdminMiddleware] as const,
   tags,
@@ -113,7 +117,7 @@ export const remove = createRoute({
       "Showtime not found",
     ),
     [HttpStatusCodes.UNPROCESSABLE_ENTITY]: jsonContent(
-      createErrorSchema(IdParamsSchema),
+      createErrorSchema(ShowtimeParamsSchema),
       "Invalid id error",
     ),
   },

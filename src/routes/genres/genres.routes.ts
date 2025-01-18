@@ -44,11 +44,15 @@ export const create = createRoute({
   },
 });
 
+const GenresParamsSchema = z.object({
+  genreId: IdParamsSchema.shape.id,
+});
+
 export const getOne = createRoute({
-  path: "/genres/{id}",
+  path: "/genres/{genreId}",
   method: "get",
   request: {
-    params: IdParamsSchema,
+    params: GenresParamsSchema,
   },
   tags,
   responses: {
@@ -61,17 +65,17 @@ export const getOne = createRoute({
       "Genre not found",
     ),
     [HttpStatusCodes.UNPROCESSABLE_ENTITY]: jsonContent(
-      createErrorSchema(IdParamsSchema),
+      createErrorSchema(GenresParamsSchema),
       "Invalid id error",
     ),
   },
 });
 
 export const patch = createRoute({
-  path: "/genres/{id}",
+  path: "/genres/{genreId}",
   method: "patch",
   request: {
-    params: IdParamsSchema,
+    params: GenresParamsSchema,
     body: jsonContentRequired(
       patchGenresSchema,
       "The genre updates",
@@ -90,17 +94,17 @@ export const patch = createRoute({
     ),
     [HttpStatusCodes.UNPROCESSABLE_ENTITY]: jsonContent(
       createErrorSchema(patchGenresSchema)
-        .or(createErrorSchema(IdParamsSchema)),
+        .or(createErrorSchema(GenresParamsSchema)),
       "The validation error(s)",
     ),
   },
 });
 
 export const remove = createRoute({
-  path: "/genres/{id}",
+  path: "/genres/{genreId}",
   method: "delete",
   request: {
-    params: IdParamsSchema,
+    params: GenresParamsSchema,
   },
   middleware: [isAdminMiddleware] as const,
   tags,
@@ -113,7 +117,7 @@ export const remove = createRoute({
       "Genre not found",
     ),
     [HttpStatusCodes.UNPROCESSABLE_ENTITY]: jsonContent(
-      createErrorSchema(IdParamsSchema),
+      createErrorSchema(GenresParamsSchema),
       "Invalid id error",
     ),
   },

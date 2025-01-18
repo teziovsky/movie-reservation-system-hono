@@ -37,11 +37,15 @@ export const getCurrent = createRoute({
   },
 });
 
+const UserParamsSchema = z.object({
+  userId: IdParamsSchema.shape.id,
+});
+
 export const getOne = createRoute({
-  path: "/users/{id}",
+  path: "/users/{userId}",
   method: "get",
   request: {
-    params: IdParamsSchema,
+    params: UserParamsSchema,
   },
   tags,
   responses: {
@@ -54,17 +58,17 @@ export const getOne = createRoute({
       "User not found",
     ),
     [HttpStatusCodes.UNPROCESSABLE_ENTITY]: jsonContent(
-      createErrorSchema(IdParamsSchema),
+      createErrorSchema(UserParamsSchema),
       "Invalid id error",
     ),
   },
 });
 
 export const patch = createRoute({
-  path: "/users/{id}",
+  path: "/users/{userId}",
   method: "patch",
   request: {
-    params: IdParamsSchema,
+    params: UserParamsSchema,
     body: jsonContentRequired(
       patchUsersSchema,
       "The user updates",
@@ -82,17 +86,17 @@ export const patch = createRoute({
     ),
     [HttpStatusCodes.UNPROCESSABLE_ENTITY]: jsonContent(
       createErrorSchema(patchUsersSchema)
-        .or(createErrorSchema(IdParamsSchema)),
+        .or(createErrorSchema(UserParamsSchema)),
       "The validation error(s)",
     ),
   },
 });
 
 export const patchRole = createRoute({
-  path: "/users/{id}/role",
+  path: "/users/{userId}/role",
   method: "patch",
   request: {
-    params: IdParamsSchema,
+    params: UserParamsSchema,
     body: jsonContentRequired(
       patchUsersRoleSchema,
       "The user role updates",
@@ -115,17 +119,17 @@ export const patchRole = createRoute({
     ),
     [HttpStatusCodes.UNPROCESSABLE_ENTITY]: jsonContent(
       createErrorSchema(patchUsersRoleSchema)
-        .or(createErrorSchema(IdParamsSchema)),
+        .or(createErrorSchema(UserParamsSchema)),
       "The validation error(s)",
     ),
   },
 });
 
 export const remove = createRoute({
-  path: "/users/{id}",
+  path: "/users/{userId}",
   method: "delete",
   request: {
-    params: IdParamsSchema,
+    params: UserParamsSchema,
   },
   middleware: [isAdminMiddleware] as const,
   tags,
@@ -138,7 +142,7 @@ export const remove = createRoute({
       "User not found",
     ),
     [HttpStatusCodes.UNPROCESSABLE_ENTITY]: jsonContent(
-      createErrorSchema(IdParamsSchema),
+      createErrorSchema(UserParamsSchema),
       "Invalid id error",
     ),
   },

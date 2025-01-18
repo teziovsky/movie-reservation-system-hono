@@ -70,8 +70,8 @@ describe("movies routes", () => {
     }
   });
 
-  it("get /movies/{id} validates the id param", async () => {
-    const response = await client.movies[":id"].$get({
+  it("get /movies/{movieId} validates the id param", async () => {
+    const response = await client.movies[":movieId"].$get({
       param: {
         // @ts-expect-error
         id: "wat",
@@ -85,8 +85,8 @@ describe("movies routes", () => {
     }
   });
 
-  it("get /movies/{id} returns 404 when task not found", async () => {
-    const response = await client.movies[":id"].$get({
+  it("get /movies/{movieId} returns 404 when task not found", async () => {
+    const response = await client.movies[":movieId"].$get({
       param: {
         id: 999,
       },
@@ -98,8 +98,8 @@ describe("movies routes", () => {
     }
   });
 
-  it("get /movies/{id} gets a single task", async () => {
-    const response = await client.movies[":id"].$get({
+  it("get /movies/{movieId} gets a single task", async () => {
+    const response = await client.movies[":movieId"].$get({
       param: {
         id,
       },
@@ -112,8 +112,8 @@ describe("movies routes", () => {
     }
   });
 
-  it("patch /movies/{id} validates the body when updating", async () => {
-    const response = await client.movies[":id"].$patch({
+  it("patch /movies/{movieId} validates the body when updating", async () => {
+    const response = await client.movies[":movieId"].$patch({
       param: {
         id,
       },
@@ -129,8 +129,8 @@ describe("movies routes", () => {
     }
   });
 
-  it("patch /movies/{id} validates the id param", async () => {
-    const response = await client.movies[":id"].$patch({
+  it("patch /movies/{movieId} validates the id param", async () => {
+    const response = await client.movies[":movieId"].$patch({
       param: {
         // @ts-expect-error
         id: "wat",
@@ -145,8 +145,8 @@ describe("movies routes", () => {
     }
   });
 
-  it("patch /movies/{id} validates empty body", async () => {
-    const response = await client.movies[":id"].$patch({
+  it("patch /movies/{movieId} validates empty body", async () => {
+    const response = await client.movies[":movieId"].$patch({
       param: {
         id,
       },
@@ -160,8 +160,8 @@ describe("movies routes", () => {
     }
   });
 
-  it("patch /movies/{id} updates a single property of a task", async () => {
-    const response = await client.movies[":id"].$patch({
+  it("patch /movies/{movieId} updates a single property of a task", async () => {
+    const response = await client.movies[":movieId"].$patch({
       param: {
         id,
       },
@@ -176,8 +176,8 @@ describe("movies routes", () => {
     }
   });
 
-  it("delete /movies/{id} validates the id when deleting", async () => {
-    const response = await client.movies[":id"].$delete({
+  it("delete /movies/{movieId} validates the id when deleting", async () => {
+    const response = await client.movies[":movieId"].$delete({
       param: {
         // @ts-expect-error
         id: "wat",
@@ -191,8 +191,8 @@ describe("movies routes", () => {
     }
   });
 
-  it("delete /movies/{id} removes a task", async () => {
-    const response = await client.movies[":id"].$delete({
+  it("delete /movies/{movieId} removes a task", async () => {
+    const response = await client.movies[":movieId"].$delete({
       param: {
         id,
       },

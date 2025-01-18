@@ -52,10 +52,10 @@ export const create: AppRouteHandler<CreateRoute> = async (c) => {
 };
 
 export const getOne: AppRouteHandler<GetOneRoute> = async (c) => {
-  const { id } = c.req.valid("param");
+  const { movieId } = c.req.valid("param");
 
   const movie = await db.query.movies.findFirst({
-    where: (fields, operators) => operators.eq(fields.id, id),
+    where: (fields, operators) => operators.eq(fields.id, movieId),
     with: {
       movieGenres: {
         with: {
@@ -88,7 +88,7 @@ export const getOne: AppRouteHandler<GetOneRoute> = async (c) => {
 };
 
 export const patch: AppRouteHandler<PatchRoute> = async (c) => {
-  const { id } = c.req.valid("param");
+  const { movieId } = c.req.valid("param");
   const updates = c.req.valid("json");
   const { genre_ids, ...movieData } = updates;
 
@@ -112,14 +112,14 @@ export const patch: AppRouteHandler<PatchRoute> = async (c) => {
   }
 
   const updated = await db.transaction(async (tx) => {
-    const [updatedMovie] = await db.update(movies).set(movieData).where(eq(movies.id, id)).returning();
+    const [updatedMovie] = await db.update(movies).set(movieData).where(eq(movies.id, movieId)).returning();
 
     if (!updatedMovie) {
       return null;
     }
 
     const existingGenres = await tx.query.movieGenres.findMany({
-      where: (fields, operators) => operators.eq(fields.movieId, id),
+      where: (fields, operators) => operators.eq(fields.movieId, movieId),
     });
     const existingGenreSet = new Set(existingGenres.map(g => g.genreId));
     const newGenreSet = new Set(genre_ids);
@@ -129,11 +129,11 @@ export const patch: AppRouteHandler<PatchRoute> = async (c) => {
 
     if (genresToDelete.length > 0) {
       await tx.delete(movieGenres)
-        .where(and(eq(movieGenres.movieId, id), inArray(movieGenres.genreId, genresToDelete)));
+        .where(and(eq(movieGenres.movieId, movieId), inArray(movieGenres.genreId, genresToDelete)));
     }
 
     if (genresToAdd.length > 0) {
-      await tx.insert(movieGenres).values(genresToAdd.map(genreId => ({ genreId, movieId: id })),
+      await tx.insert(movieGenres).values(genresToAdd.map(genreId => ({ genreId, movieId })),
       );
     }
 
@@ -153,10 +153,10 @@ export const patch: AppRouteHandler<PatchRoute> = async (c) => {
 };
 
 export const remove: AppRouteHandler<RemoveRoute> = async (c) => {
-  const { id } = c.req.valid("param");
+  const { movieId } = c.req.valid("param");
 
   const result = await db.delete(movies)
-    .where(eq(movies.id, id))
+    .where(eq(movies.id, movieId))
     .returning();
 
   if (result.length === 0) {

@@ -22,10 +22,10 @@ export const create: AppRouteHandler<CreateRoute> = async (c) => {
 };
 
 export const getOne: AppRouteHandler<GetOneRoute> = async (c) => {
-  const { id } = c.req.valid("param");
+  const { showtimeId } = c.req.valid("param");
 
   const showtime = await db.query.showtimes.findFirst({
-    where: (fields, operators) => operators.eq(fields.id, id),
+    where: (fields, operators) => operators.eq(fields.id, showtimeId),
   });
 
   if (!showtime) {
@@ -41,7 +41,7 @@ export const getOne: AppRouteHandler<GetOneRoute> = async (c) => {
 };
 
 export const patch: AppRouteHandler<PatchRoute> = async (c) => {
-  const { id } = c.req.valid("param");
+  const { showtimeId } = c.req.valid("param");
   const updates = c.req.valid("json");
 
   if (Object.keys(updates).length === 0) {
@@ -65,7 +65,7 @@ export const patch: AppRouteHandler<PatchRoute> = async (c) => {
 
   const [showtime] = await db.update(showtimes)
     .set(updates)
-    .where(eq(showtimes.id, id))
+    .where(eq(showtimes.id, showtimeId))
     .returning();
 
   if (!showtime) {
@@ -81,10 +81,10 @@ export const patch: AppRouteHandler<PatchRoute> = async (c) => {
 };
 
 export const remove: AppRouteHandler<RemoveRoute> = async (c) => {
-  const { id } = c.req.valid("param");
+  const { showtimeId } = c.req.valid("param");
 
   const result = await db.delete(showtimes)
-    .where(eq(showtimes.id, id))
+    .where(eq(showtimes.id, showtimeId))
     .returning();
 
   if (result.length === 0) {

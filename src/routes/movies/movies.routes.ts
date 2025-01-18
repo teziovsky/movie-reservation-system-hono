@@ -44,11 +44,15 @@ export const create = createRoute({
   },
 });
 
+const MovieParamsSchema = z.object({
+  movieId: IdParamsSchema.shape.id,
+});
+
 export const getOne = createRoute({
-  path: "/movies/{id}",
+  path: "/movies/{movieId}",
   method: "get",
   request: {
-    params: IdParamsSchema,
+    params: MovieParamsSchema,
   },
   tags,
   responses: {
@@ -61,17 +65,17 @@ export const getOne = createRoute({
       "Movie not found",
     ),
     [HttpStatusCodes.UNPROCESSABLE_ENTITY]: jsonContent(
-      createErrorSchema(IdParamsSchema),
+      createErrorSchema(MovieParamsSchema),
       "Invalid id error",
     ),
   },
 });
 
 export const patch = createRoute({
-  path: "/movies/{id}",
+  path: "/movies/{movieId}",
   method: "patch",
   request: {
-    params: IdParamsSchema,
+    params: MovieParamsSchema,
     body: jsonContentRequired(
       patchMoviesSchema,
       "The movie updates",
@@ -90,17 +94,17 @@ export const patch = createRoute({
     ),
     [HttpStatusCodes.UNPROCESSABLE_ENTITY]: jsonContent(
       createErrorSchema(patchMoviesSchema)
-        .or(createErrorSchema(IdParamsSchema)),
+        .or(createErrorSchema(MovieParamsSchema)),
       "The validation error(s)",
     ),
   },
 });
 
 export const remove = createRoute({
-  path: "/movies/{id}",
+  path: "/movies/{movieId}",
   method: "delete",
   request: {
-    params: IdParamsSchema,
+    params: MovieParamsSchema,
   },
   middleware: [isAdminMiddleware] as const,
   tags,
@@ -113,7 +117,7 @@ export const remove = createRoute({
       "Movie not found",
     ),
     [HttpStatusCodes.UNPROCESSABLE_ENTITY]: jsonContent(
-      createErrorSchema(IdParamsSchema),
+      createErrorSchema(MovieParamsSchema),
       "Invalid id error",
     ),
   },
