@@ -205,11 +205,11 @@ export const insertShowtimesSchema = createInsertSchema(showtimes).required({
 });
 
 export const insertSeatsSchema = createInsertSchema(seats).required({
-  showtimeId: true,
   row: true,
   number: true,
 }).omit({
   id: true,
+  showtimeId: true,
   isAvailable: true,
 });
 
@@ -278,6 +278,7 @@ export const patchShowtimesSchema = createUpdateSchema(showtimes).omit({
 
 export const patchSeatsSchema = createUpdateSchema(seats).omit({
   id: true,
+  showtimeId: true,
   isAvailable: true,
 });
 

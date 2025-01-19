@@ -76,7 +76,7 @@ export const patch: AppRouteHandler<PatchRoute> = async (c) => {
   }
 
   const [updated] = await db.update(seats)
-    .set(updates)
+    .set({ ...updates, showtimeId })
     .where(
       and(
         eq(seats.id, seatId),
