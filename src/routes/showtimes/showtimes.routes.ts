@@ -4,7 +4,7 @@ import { jsonContent, jsonContentRequired } from "stoker/openapi/helpers";
 import { createErrorSchema } from "stoker/openapi/schemas";
 
 import { insertShowtimesSchema, patchShowtimesSchema, selectShowtimesSchema } from "@/db/schema";
-import { notFoundSchema } from "@/lib/constants";
+import { IdParamSchema, notFoundSchema } from "@/lib/constants";
 import { isAdminMiddleware } from "@/middlewares/is-admin.middleware";
 
 const tags = ["Showtimes"];
@@ -44,9 +44,7 @@ export const create = createRoute({
   },
 });
 
-const ShowtimeParamsSchema = z.object({
-  showtimeId: selectShowtimesSchema.shape.id,
-});
+export const ShowtimeParamsSchema = IdParamSchema("showtimeId");
 
 export const getOne = createRoute({
   path: "/showtimes/{showtimeId}",
@@ -93,8 +91,7 @@ export const patch = createRoute({
       "Showtime not found",
     ),
     [HttpStatusCodes.UNPROCESSABLE_ENTITY]: jsonContent(
-      createErrorSchema(patchShowtimesSchema)
-        .or(createErrorSchema(ShowtimeParamsSchema)),
+      createErrorSchema(patchShowtimesSchema).or(createErrorSchema(ShowtimeParamsSchema)),
       "The validation error(s)",
     ),
   },

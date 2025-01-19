@@ -4,7 +4,7 @@ import { jsonContent, jsonContentRequired } from "stoker/openapi/helpers";
 import { createErrorSchema } from "stoker/openapi/schemas";
 
 import { patchUsersRoleSchema, patchUsersSchema, selectUsersSchema } from "@/db/schema";
-import { notFoundSchema, unauthorizedSchema, ZOD_ERROR_MESSAGES } from "@/lib/constants";
+import { IdParamSchema, notFoundSchema, unauthorizedSchema, ZOD_ERROR_MESSAGES } from "@/lib/constants";
 import { isAdminMiddleware } from "@/middlewares/is-admin.middleware";
 
 const tags = ["Users"];
@@ -37,9 +37,7 @@ export const getCurrent = createRoute({
   },
 });
 
-const UserParamsSchema = z.object({
-  userId: selectUsersSchema.shape.id,
-});
+const UserParamsSchema = IdParamSchema("userId");
 
 export const getOne = createRoute({
   path: "/users/{userId}",
@@ -85,8 +83,7 @@ export const patch = createRoute({
       "User not found",
     ),
     [HttpStatusCodes.UNPROCESSABLE_ENTITY]: jsonContent(
-      createErrorSchema(patchUsersSchema)
-        .or(createErrorSchema(UserParamsSchema)),
+      createErrorSchema(patchUsersSchema).or(createErrorSchema(UserParamsSchema)),
       "The validation error(s)",
     ),
   },
@@ -118,8 +115,7 @@ export const patchRole = createRoute({
       ZOD_ERROR_MESSAGES.INVALID_CREDENTIALS,
     ),
     [HttpStatusCodes.UNPROCESSABLE_ENTITY]: jsonContent(
-      createErrorSchema(patchUsersRoleSchema)
-        .or(createErrorSchema(UserParamsSchema)),
+      createErrorSchema(patchUsersRoleSchema).or(createErrorSchema(UserParamsSchema)),
       "The validation error(s)",
     ),
   },

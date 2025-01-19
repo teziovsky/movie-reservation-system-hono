@@ -4,18 +4,14 @@ import { jsonContent, jsonContentRequired } from "stoker/openapi/helpers";
 import { createErrorSchema } from "stoker/openapi/schemas";
 
 import { insertGenresSchema, patchGenresSchema, selectGenresSchema } from "@/db/schema";
-import { notFoundSchema } from "@/lib/constants";
+import { IdParamSchema, notFoundSchema } from "@/lib/constants";
 import { isAdminMiddleware } from "@/middlewares/is-admin.middleware";
-import { MovieParamsSchema } from "@/routes/movies/movies.routes";
 
-const tags = ["Movies"];
+const tags = ["Genres"];
 
 export const list = createRoute({
-  path: "/movies/{movieId}/genres",
+  path: "/genres",
   method: "get",
-  request: {
-    params: MovieParamsSchema,
-  },
   tags,
   responses: {
     [HttpStatusCodes.OK]: jsonContent(
@@ -26,10 +22,9 @@ export const list = createRoute({
 });
 
 export const create = createRoute({
-  path: "/movies/{movieId}/genres",
+  path: "/genres",
   method: "post",
   request: {
-    params: MovieParamsSchema,
     body: jsonContentRequired(
       insertGenresSchema,
       "The genre to create",
@@ -49,12 +44,10 @@ export const create = createRoute({
   },
 });
 
-const GenresParamsSchema = MovieParamsSchema.merge(z.object({
-  genreId: selectGenresSchema.shape.id,
-}));
+export const GenresParamsSchema = IdParamSchema("genreId");
 
 export const getOne = createRoute({
-  path: "/movies/{movieId}/genres/{genreId}",
+  path: "/genres/{genreId}",
   method: "get",
   request: {
     params: GenresParamsSchema,
@@ -77,7 +70,7 @@ export const getOne = createRoute({
 });
 
 export const patch = createRoute({
-  path: "/movies/{movieId}/genres/{genreId}",
+  path: "/genres/{genreId}",
   method: "patch",
   request: {
     params: GenresParamsSchema,
@@ -98,15 +91,14 @@ export const patch = createRoute({
       "Genre not found",
     ),
     [HttpStatusCodes.UNPROCESSABLE_ENTITY]: jsonContent(
-      createErrorSchema(patchGenresSchema)
-        .or(createErrorSchema(GenresParamsSchema)),
+      createErrorSchema(patchGenresSchema).or(createErrorSchema(GenresParamsSchema)),
       "The validation error(s)",
     ),
   },
 });
 
 export const remove = createRoute({
-  path: "/movies/{movieId}/genres/{genreId}",
+  path: "/genres/{genreId}",
   method: "delete",
   request: {
     params: GenresParamsSchema,

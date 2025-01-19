@@ -3,15 +3,12 @@ import * as HttpStatusCodes from "stoker/http-status-codes";
 import { jsonContent, jsonContentRequired } from "stoker/openapi/helpers";
 import { createErrorSchema } from "stoker/openapi/schemas";
 
-import { insertSeatsSchema, patchSeatsSchema, selectSeatsSchema, selectShowtimesSchema } from "@/db/schema";
-import { notFoundSchema } from "@/lib/constants";
+import { insertSeatsSchema, patchSeatsSchema, selectSeatsSchema } from "@/db/schema";
+import { IdParamSchema, notFoundSchema } from "@/lib/constants";
 import { isAdminMiddleware } from "@/middlewares/is-admin.middleware";
+import { ShowtimeParamsSchema } from "@/routes/showtimes/showtimes.routes";
 
 const tags = ["Showtimes"];
-
-const ShowtimeParamsSchema = z.object({
-  showtimeId: selectShowtimesSchema.shape.id,
-});
 
 export const list = createRoute({
   path: "/showtimes/{showtimeId}/seats",
@@ -34,7 +31,7 @@ export const create = createRoute({
   request: {
     params: ShowtimeParamsSchema,
     body: jsonContentRequired(
-      insertSeatsSchema,
+      insertSeatsSchema.omit({ showtimeId: true }),
       "The seat to create",
     ),
   },
@@ -46,15 +43,13 @@ export const create = createRoute({
       "The created seat",
     ),
     [HttpStatusCodes.UNPROCESSABLE_ENTITY]: jsonContent(
-      createErrorSchema(insertSeatsSchema),
+      createErrorSchema(ShowtimeParamsSchema).or(createErrorSchema(insertSeatsSchema.omit({ showtimeId: true }))),
       "The validation error(s)",
     ),
   },
 });
 
-const ShowtimeSeatParamsSchema = ShowtimeParamsSchema.merge(z.object({
-  seatId: selectSeatsSchema.shape.id,
-}));
+const ShowtimeSeatParamsSchema = ShowtimeParamsSchema.merge(IdParamSchema("seatId"));
 
 export const getOne = createRoute({
   path: "/showtimes/{showtimeId}/seats/{seatId}",
@@ -81,7 +76,7 @@ export const patch = createRoute({
   request: {
     params: ShowtimeSeatParamsSchema,
     body: jsonContentRequired(
-      patchSeatsSchema,
+      patchSeatsSchema.omit({ showtimeId: true }),
       "The seat updates",
     ),
   },
@@ -97,8 +92,8 @@ export const patch = createRoute({
       "Seat not found",
     ),
     [HttpStatusCodes.UNPROCESSABLE_ENTITY]: jsonContent(
-      createErrorSchema(ShowtimeSeatParamsSchema),
-      "Invalid id error",
+      createErrorSchema(ShowtimeSeatParamsSchema).or(createErrorSchema(patchSeatsSchema.omit({ showtimeId: true }))),
+      "The validation error(s)",
     ),
   },
 });

@@ -4,7 +4,7 @@ import { jsonContent, jsonContentRequired } from "stoker/openapi/helpers";
 import { createErrorSchema } from "stoker/openapi/schemas";
 
 import { insertMoviesSchema, patchMoviesSchema, selectMoviesSchema, selectMoviesWithGenresSchema } from "@/db/schema";
-import { notFoundSchema } from "@/lib/constants";
+import { IdParamSchema, notFoundSchema } from "@/lib/constants";
 import { isAdminMiddleware } from "@/middlewares/is-admin.middleware";
 
 const tags = ["Movies"];
@@ -44,9 +44,7 @@ export const create = createRoute({
   },
 });
 
-export const MovieParamsSchema = z.object({
-  movieId: selectMoviesSchema.shape.id,
-});
+export const MovieParamsSchema = IdParamSchema("movieId");
 
 export const getOne = createRoute({
   path: "/movies/{movieId}",
@@ -93,8 +91,7 @@ export const patch = createRoute({
       "Movie not found",
     ),
     [HttpStatusCodes.UNPROCESSABLE_ENTITY]: jsonContent(
-      createErrorSchema(patchMoviesSchema)
-        .or(createErrorSchema(MovieParamsSchema)),
+      createErrorSchema(patchMoviesSchema).or(createErrorSchema(MovieParamsSchema)),
       "The validation error(s)",
     ),
   },
