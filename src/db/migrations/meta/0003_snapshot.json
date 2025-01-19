@@ -1,6 +1,6 @@
 {
-  "id": "c54069ca-2f2d-4ea5-a4b3-95aa4701b67a",
-  "prevId": "00000000-0000-0000-0000-000000000000",
+  "id": "5b480278-b787-4920-8ead-b20d90b58b6f",
+  "prevId": "96aff602-d9e4-43fd-80c5-b9e7b18ca75f",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -72,7 +72,7 @@
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
+          "onDelete": "cascade",
           "onUpdate": "no action"
         },
         "movie_genres_genre_id_genres_id_fk": {
@@ -85,7 +85,7 @@
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
+          "onDelete": "cascade",
           "onUpdate": "no action"
         }
       },
@@ -116,6 +116,13 @@
           "type": "text",
           "primaryKey": false,
           "notNull": true
+        },
+        "runtime": {
+          "name": "runtime",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "default": 0
         },
         "poster_url": {
           "name": "poster_url",
@@ -201,7 +208,7 @@
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
+          "onDelete": "cascade",
           "onUpdate": "no action"
         },
         "reservations_showtime_id_showtimes_id_fk": {
@@ -214,7 +221,7 @@
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
+          "onDelete": "cascade",
           "onUpdate": "no action"
         },
         "reservations_seat_id_seats_id_fk": {
@@ -227,7 +234,7 @@
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
+          "onDelete": "cascade",
           "onUpdate": "no action"
         }
       },
@@ -293,7 +300,7 @@
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
+          "onDelete": "cascade",
           "onUpdate": "no action"
         }
       },
@@ -358,7 +365,7 @@
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
+          "onDelete": "cascade",
           "onUpdate": "no action"
         }
       },
@@ -403,6 +410,13 @@
           "primaryKey": false,
           "notNull": true,
           "default": "'user'"
+        },
+        "image": {
+          "name": "image",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "NULL"
         },
         "created_at": {
           "name": "created_at",

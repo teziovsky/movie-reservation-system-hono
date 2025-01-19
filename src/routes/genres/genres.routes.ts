@@ -1,115 +1,120 @@
 import { createRoute, z } from "@hono/zod-openapi";
 import * as HttpStatusCodes from "stoker/http-status-codes";
 import { jsonContent, jsonContentRequired } from "stoker/openapi/helpers";
-import { createErrorSchema, IdParamsSchema } from "stoker/openapi/schemas";
+import { createErrorSchema } from "stoker/openapi/schemas";
 
-import { insertTasksSchema, patchTasksSchema, selectTasksSchema } from "@/db/schema";
-import { notFoundSchema } from "@/lib/constants";
+import { insertGenresSchema, patchGenresSchema, selectGenresSchema } from "@/db/schema";
+import { IdParamSchema, notFoundSchema } from "@/lib/constants";
+import { isAdminMiddleware } from "@/middlewares/is-admin.middleware";
 
-const tags = ["Tasks"];
+const tags = ["Genres"];
 
 export const list = createRoute({
-  path: "/tasks",
+  path: "/genres",
   method: "get",
   tags,
   responses: {
     [HttpStatusCodes.OK]: jsonContent(
-      z.array(selectTasksSchema),
-      "The list of tasks",
+      z.array(selectGenresSchema),
+      "The list of genres",
     ),
   },
 });
 
 export const create = createRoute({
-  path: "/tasks",
+  path: "/genres",
   method: "post",
   request: {
     body: jsonContentRequired(
-      insertTasksSchema,
-      "The task to create",
+      insertGenresSchema,
+      "The genre to create",
     ),
   },
+  middleware: [isAdminMiddleware] as const,
   tags,
   responses: {
-    [HttpStatusCodes.OK]: jsonContent(
-      selectTasksSchema,
-      "The created task",
+    [HttpStatusCodes.CREATED]: jsonContent(
+      selectGenresSchema,
+      "The created genre",
     ),
     [HttpStatusCodes.UNPROCESSABLE_ENTITY]: jsonContent(
-      createErrorSchema(insertTasksSchema),
+      createErrorSchema(insertGenresSchema),
       "The validation error(s)",
     ),
   },
 });
 
+export const GenresParamsSchema = IdParamSchema("genreId");
+
 export const getOne = createRoute({
-  path: "/tasks/{id}",
+  path: "/genres/{genreId}",
   method: "get",
   request: {
-    params: IdParamsSchema,
+    params: GenresParamsSchema,
   },
   tags,
   responses: {
     [HttpStatusCodes.OK]: jsonContent(
-      selectTasksSchema,
-      "The requested task",
+      selectGenresSchema,
+      "The requested genre",
     ),
     [HttpStatusCodes.NOT_FOUND]: jsonContent(
       notFoundSchema,
-      "Task not found",
+      "Genre not found",
     ),
     [HttpStatusCodes.UNPROCESSABLE_ENTITY]: jsonContent(
-      createErrorSchema(IdParamsSchema),
+      createErrorSchema(GenresParamsSchema),
       "Invalid id error",
     ),
   },
 });
 
 export const patch = createRoute({
-  path: "/tasks/{id}",
+  path: "/genres/{genreId}",
   method: "patch",
   request: {
-    params: IdParamsSchema,
+    params: GenresParamsSchema,
     body: jsonContentRequired(
-      patchTasksSchema,
-      "The task updates",
+      patchGenresSchema,
+      "The genre updates",
     ),
   },
+  middleware: [isAdminMiddleware] as const,
   tags,
   responses: {
     [HttpStatusCodes.OK]: jsonContent(
-      selectTasksSchema,
-      "The updated task",
+      selectGenresSchema,
+      "The updated genre",
     ),
     [HttpStatusCodes.NOT_FOUND]: jsonContent(
       notFoundSchema,
-      "Task not found",
+      "Genre not found",
     ),
     [HttpStatusCodes.UNPROCESSABLE_ENTITY]: jsonContent(
-      createErrorSchema(patchTasksSchema)
-        .or(createErrorSchema(IdParamsSchema)),
+      createErrorSchema(patchGenresSchema).or(createErrorSchema(GenresParamsSchema)),
       "The validation error(s)",
     ),
   },
 });
 
 export const remove = createRoute({
-  path: "/tasks/{id}",
+  path: "/genres/{genreId}",
   method: "delete",
   request: {
-    params: IdParamsSchema,
+    params: GenresParamsSchema,
   },
+  middleware: [isAdminMiddleware] as const,
   tags,
   responses: {
     [HttpStatusCodes.NO_CONTENT]: {
-      description: "Task deleted",
+      description: "Genre deleted",
     },
     [HttpStatusCodes.NOT_FOUND]: jsonContent(
       notFoundSchema,
-      "Task not found",
+      "Genre not found",
     ),
     [HttpStatusCodes.UNPROCESSABLE_ENTITY]: jsonContent(
-      createErrorSchema(IdParamsSchema),
+      createErrorSchema(GenresParamsSchema),
       "Invalid id error",
     ),
   },

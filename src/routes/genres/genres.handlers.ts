@@ -4,32 +4,31 @@ import * as HttpStatusPhrases from "stoker/http-status-phrases";
 
 import type { AppRouteHandler } from "@/lib/types";
 
-import db from "@/db";
-import { tasks } from "@/db/schema";
+import { db } from "@/db";
+import { genres } from "@/db/schema";
 import { ZOD_ERROR_CODES, ZOD_ERROR_MESSAGES } from "@/lib/constants";
 
-import type { CreateRoute, GetOneRoute, ListRoute, PatchRoute, RemoveRoute } from "./tasks.routes";
+import type { CreateRoute, GetOneRoute, ListRoute, PatchRoute, RemoveRoute } from "./genres.routes";
 
 export const list: AppRouteHandler<ListRoute> = async (c) => {
-  const tasks = await db.query.tasks.findMany();
-  return c.json(tasks);
+  const genres = await db.query.genres.findMany();
+  return c.json(genres);
 };
 
 export const create: AppRouteHandler<CreateRoute> = async (c) => {
-  const task = c.req.valid("json");
-  const [inserted] = await db.insert(tasks).values(task).returning();
-  return c.json(inserted, HttpStatusCodes.OK);
+  const genre = c.req.valid("json");
+  const [inserted] = await db.insert(genres).values(genre).returning();
+  return c.json(inserted, HttpStatusCodes.CREATED);
 };
 
 export const getOne: AppRouteHandler<GetOneRoute> = async (c) => {
-  const { id } = c.req.valid("param");
-  const task = await db.query.tasks.findFirst({
-    where(fields, operators) {
-      return operators.eq(fields.id, id);
-    },
+  const { genreId } = c.req.valid("param");
+
+  const genre = await db.query.genres.findFirst({
+    where: (fields, operators) => operators.eq(fields.id, genreId),
   });
 
-  if (!task) {
+  if (!genre) {
     return c.json(
       {
         message: HttpStatusPhrases.NOT_FOUND,
@@ -38,11 +37,11 @@ export const getOne: AppRouteHandler<GetOneRoute> = async (c) => {
     );
   }
 
-  return c.json(task, HttpStatusCodes.OK);
+  return c.json(genre, HttpStatusCodes.OK);
 };
 
 export const patch: AppRouteHandler<PatchRoute> = async (c) => {
-  const { id } = c.req.valid("param");
+  const { genreId } = c.req.valid("param");
   const updates = c.req.valid("json");
 
   if (Object.keys(updates).length === 0) {
@@ -64,12 +63,12 @@ export const patch: AppRouteHandler<PatchRoute> = async (c) => {
     );
   }
 
-  const [task] = await db.update(tasks)
+  const [genre] = await db.update(genres)
     .set(updates)
-    .where(eq(tasks.id, id))
+    .where(eq(genres.id, genreId))
     .returning();
 
-  if (!task) {
+  if (!genre) {
     return c.json(
       {
         message: HttpStatusPhrases.NOT_FOUND,
@@ -78,15 +77,17 @@ export const patch: AppRouteHandler<PatchRoute> = async (c) => {
     );
   }
 
-  return c.json(task, HttpStatusCodes.OK);
+  return c.json(genre, HttpStatusCodes.OK);
 };
 
 export const remove: AppRouteHandler<RemoveRoute> = async (c) => {
-  const { id } = c.req.valid("param");
-  const result = await db.delete(tasks)
-    .where(eq(tasks.id, id));
+  const { genreId } = c.req.valid("param");
 
-  if (result.rowsAffected === 0) {
+  const result = await db.delete(genres)
+    .where(eq(genres.id, genreId))
+    .returning();
+
+  if (result.length === 0) {
     return c.json(
       {
         message: HttpStatusPhrases.NOT_FOUND,

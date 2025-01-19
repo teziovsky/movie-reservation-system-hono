@@ -1,6 +1,6 @@
 {
-  "id": "c54069ca-2f2d-4ea5-a4b3-95aa4701b67a",
-  "prevId": "00000000-0000-0000-0000-000000000000",
+  "id": "be242ebc-91ef-4b14-9e30-5c19fb5dd272",
+  "prevId": "c54069ca-2f2d-4ea5-a4b3-95aa4701b67a",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -72,7 +72,7 @@
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
+          "onDelete": "cascade",
           "onUpdate": "no action"
         },
         "movie_genres_genre_id_genres_id_fk": {
@@ -85,7 +85,7 @@
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
+          "onDelete": "cascade",
           "onUpdate": "no action"
         }
       },
@@ -201,7 +201,7 @@
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
+          "onDelete": "cascade",
           "onUpdate": "no action"
         },
         "reservations_showtime_id_showtimes_id_fk": {
@@ -214,7 +214,7 @@
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
+          "onDelete": "cascade",
           "onUpdate": "no action"
         },
         "reservations_seat_id_seats_id_fk": {
@@ -227,7 +227,7 @@
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
+          "onDelete": "cascade",
           "onUpdate": "no action"
         }
       },
@@ -293,7 +293,7 @@
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
+          "onDelete": "cascade",
           "onUpdate": "no action"
         }
       },
@@ -358,7 +358,7 @@
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
+          "onDelete": "cascade",
           "onUpdate": "no action"
         }
       },

@@ -1,12 +1,40 @@
 {
   "version": "7",
-  "dialect": "sqlite",
+  "dialect": "postgresql",
   "entries": [
     {
       "idx": 0,
-      "version": "6",
-      "when": 1728133964232,
-      "tag": "0000_same_squadron_sinister",
+      "version": "7",
+      "when": 1737047246550,
+      "tag": "0000_chemical_iron_lad",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1737056794214,
+      "tag": "0001_round_spacker_dave",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1737206639831,
+      "tag": "0002_freezing_bug",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1737226855277,
+      "tag": "0003_brave_wolfsbane",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1737226950470,
+      "tag": "0004_perfect_mandarin",
       "breakpoints": true
     }
   ]
