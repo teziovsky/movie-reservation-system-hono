@@ -87,8 +87,8 @@ A modern movie reservation system built with Hono and Drizzle ORM. This system a
 
 ### Seat & Reservation System
 
-- [ ] Implement seat management
-- [ ] Implement seat availability checking
+- [x] Implement seat management
+- [x] Implement seat availability checking
 - [ ] Create seat reservation logic
 - [ ] Add reservation confirmation system
 - [ ] Implement reservation cancellation
@@ -99,8 +99,6 @@ A modern movie reservation system built with Hono and Drizzle ORM. This system a
 - [ ] Create reservation reports for admins
 - [ ] Implement revenue reporting
 - [ ] Add capacity utilization reports
-- [ ] Create user booking history
-- [ ] Implement analytics dashboard
 
 ### Testing
 
